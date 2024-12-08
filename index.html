@@ -1,1 +1,34 @@
-<h1>君言测试网站</h1>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>君言测试网站</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <h1>君言测试网站</h1>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索...">
+            </div>
+            <a href="https://jn6074dvza.feishu.cn/share/base/form/shrcnJ1irL036G3oqo4uYq0C4qh" class="submit-btn">提交需求</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="finished">已完成</button>
+            <button class="filter-btn" data-filter="unfinished">未完成</button>
+        </div>
+
+        <div class="cards-container" id="cardsContainer">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>
