@@ -28,6 +28,8 @@ def get_json(item):
     return item_json
 def main():
     try:
+        data_dir = 'data'
+        os.makedirs(data_dir, exist_ok=True)
         payload = json.load(sys.stdin)
         # 确保 users 是列表格式
         data = str(payload.get("data"))
@@ -35,25 +37,26 @@ def main():
         path_now = os.path.dirname(os.path.abspath(__file__))
         for item in data_info:
             item_json = get_json(item)
-            file_path = os.path.join(path_now, "data", f"{item_json['index']}.json")
+            file_path = os.path.join(data_dir, f"{item_json['index']}.json")
+            # file_path = os.path.join(path_now, "data", f"{item_json['index']}.json")
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(item_json, f, ensure_ascii=False, indent=4)
         # 遍历data 文件夹下的json，写入到datalist.json中
-        data_dir = os.path.join(path_now, "data")
-        json_files = [f for f in os.listdir(data_dir) if f.endswith('.json')]
-        with open(os.path.join(path_now, "datalist.json"), 'w', encoding='utf-8') as f:
-            json.dump(json_files, f, ensure_ascii=False, indent=4)
+        # data_dir = os.path.join(path_now, "data")
+        # json_files = [f for f in os.listdir(data_dir) if f.endswith('.json')]
+        # with open(os.path.join(path_now, "datalist.json"), 'w', encoding='utf-8') as f:
+        #     json.dump(json_files, f, ensure_ascii=False, indent=4)
 
     except json.JSONDecodeError:
         print("Failed to decode JSON.")
     except Exception as e:
         print(f"An error occurred: {e}")
-    # 遍历data目录下的所有json文件，写入到datalist.json中
-    # script_dir = os.path.dirname(os.path.abspath(__file__))
-    # json_files = [f for f in os.listdir(data_dir) if f.endswith('.json')]
-    # datalist_path = os.path.join(script_dir, 'datalist.json')
-    # with open(datalist_path, 'w', encoding='utf-8') as f:
-    #     json.dump(json_files, f, ensure_ascii=False, indent=4)
+    遍历data目录下的所有json文件，写入到datalist.json中
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    json_files = [f for f in os.listdir(data_dir) if f.endswith('.json')]
+    datalist_path = os.path.join(script_dir, 'datalist.json')
+    with open(datalist_path, 'w', encoding='utf-8') as f:
+        json.dump(json_files, f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
     main()
