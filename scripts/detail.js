@@ -69,6 +69,10 @@ function renderDetail(item) {
                 <h2>描述</h2>
                 <p>${item.desc}</p>
             </div>
+            <div class="description">
+                <h2>链接</h2>
+                <a href="${item.link}">前往</a>
+            </div>
             ${item.content ? `
                 <div class="content">
                     <h2>详细内容</h2>
