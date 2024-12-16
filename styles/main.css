@@ -111,3 +111,15 @@ main {
 .submit-btn:hover {
     background-color: #45a049;
 }
+
+.finished-section,
+.unfinished-section {
+    margin: 2rem 0;
+}
+
+.finished-section h2,
+.unfinished-section h2 {
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    border-left: 4px solid #333;
+}

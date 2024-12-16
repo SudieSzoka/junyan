@@ -53,6 +53,25 @@ function filterCards(data, filter = 'all') {
     });
 }
 
+function displayCards(data) {
+    const finishedContainer = document.getElementById('finishedContainer');
+    const unfinishedContainer = document.getElementById('unfinishedContainer');
+    
+    // 清空容器
+    finishedContainer.innerHTML = '';
+    unfinishedContainer.innerHTML = '';
+    
+    // 分类数据
+    data.forEach(item => {
+        const card = createCard(item);
+        if (item.isFinish === 1) {
+            finishedContainer.appendChild(card);
+        } else {
+            unfinishedContainer.appendChild(card);
+        }
+    });
+}
+
 function setupSearch(data) {
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('input', (e) => {
@@ -61,7 +80,7 @@ function setupSearch(data) {
             item.name.toLowerCase().includes(searchTerm) ||
             item.desc.toLowerCase().includes(searchTerm)
         );
-        filterCards(filtered);
+        displayCards(filtered);
     });
 }
 

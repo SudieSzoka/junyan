@@ -18,15 +18,21 @@
     </nav>
 
     <main>
-        <div class="filters">
+        <!-- <div class="filters">
             <button class="filter-btn active" data-filter="all">全部</button>
             <button class="filter-btn" data-filter="finished">已完成</button>
             <button class="filter-btn" data-filter="unfinished">未完成</button>
-        </div>
+        </div> -->
 
-        <div class="cards-container" id="cardsContainer">
-            <!-- Cards will be dynamically inserted here -->
-        </div>
+        <section class="finished-section">
+            <h2>已完成</h2>
+            <div class="cards-container" id="finishedContainer"></div>
+        </section>
+    
+        <section class="unfinished-section">
+            <h2>未完成</h2>
+            <div class="cards-container" id="unfinishedContainer"></div>
+        </section>
     </main>
 
     <script src="scripts/main.js"></script>
