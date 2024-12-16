@@ -22,7 +22,7 @@ async function loadData() {
 
 function createCard(item) {
     const card = document.createElement('div');
-    card.className = `card ${item.isFinish ? 'finished' : 'unfinished'}`;
+    card.className = `card ${item.isFinish === 1 ? 'finished' : 'unfinished'}`;
     
     card.innerHTML = `
         <h2>${item.name}</h2>
@@ -37,22 +37,6 @@ function createCard(item) {
     return card;
 }
 
-function filterCards(data, filter = 'all') {
-    const container = document.getElementById('cardsContainer');
-    container.innerHTML = '';
-    
-    let filteredData = data;
-    if (filter === 'finished') {
-        filteredData = data.filter(item => item.isFinish === 1);
-    } else if (filter === 'unfinished') {
-        filteredData = data.filter(item => item.isFinish === 0);
-    }
-
-    filteredData.forEach(item => {
-        container.appendChild(createCard(item));
-    });
-}
-
 function displayCards(data) {
     const finishedContainer = document.getElementById('finishedContainer');
     const unfinishedContainer = document.getElementById('unfinishedContainer');
@@ -64,7 +48,7 @@ function displayCards(data) {
     // 分类数据
     data.forEach(item => {
         const card = createCard(item);
-        if (item.isFinish === 1) {
+        if (parseInt(item.isFinish) === 1) {
             finishedContainer.appendChild(card);
         } else {
             unfinishedContainer.appendChild(card);
@@ -84,22 +68,10 @@ function setupSearch(data) {
     });
 }
 
-function setupFilterButtons(data) {
-    const buttons = document.querySelectorAll('.filter-btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            filterCards(data, btn.dataset.filter);
-        });
-    });
-}
-
 async function init() {
     const data = await loadData();
-    filterCards(data);
+    displayCards(data);
     setupSearch(data);
-    setupFilterButtons(data);
 }
 
 init();
