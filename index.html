@@ -5,49 +5,162 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>君言社区工具站</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neumorphic': {
+                            'light': '#f0f0f3',
+                            'dark': '#d1d9e6',
+                            'shadow': '#a3b1c6'
+                        }
+                    },
+                    boxShadow: {
+                        'neumorphic': '20px 20px 60px #bebebe, -20px -20px 60px #ffffff',
+                        'neumorphic-inset': 'inset 20px 20px 60px #bebebe, inset -20px -20px 60px #ffffff',
+                        'neumorphic-pressed': 'inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-
-        .tool-card {
+        /* 拟物风背景渐变 */
+        .neumorphic-bg {
+            background: linear-gradient(145deg, #e6e6e6, #ffffff);
+        }
+        
+        /* 拟物风卡片 */
+        .neumorphic-card {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .neumorphic-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 25px 25px 75px #bebebe, -25px -25px 75px #ffffff;
+        }
+        
+        /* 拟物风按钮 */
+        .neumorphic-btn {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff;
+            transition: all 0.2s ease;
+        }
+        
+        .neumorphic-btn:hover {
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            transform: translateY(2px);
+        }
+        
+        .neumorphic-btn:active {
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            transform: translateY(4px);
+        }
+        
+        /* 拟物风输入框 */
+        .neumorphic-input {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            border: none;
             transition: all 0.3s ease;
         }
-        .tool-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        
+        .neumorphic-input:focus {
+            box-shadow: inset 8px 8px 16px #bebebe, inset -8px -8px 16px #ffffff;
+            outline: none;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        
+        /* 拟物风头部 */
+        .neumorphic-header {
+            background: linear-gradient(145deg, #ffffff, #f0f0f3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
+        
+        /* 玻璃态效果 */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        /* 自定义滚动条 */
         .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: #f1f1f1;
+            border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
+            background: linear-gradient(145deg, #d1d9e6, #a3b1c6);
+            border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            background: linear-gradient(145deg, #a3b1c6, #8a9bb3);
+        }
+        
+        /* 动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* 工具图标容器 */
+        .tool-icon-container {
+            background: linear-gradient(145deg, #dde3ff, #7d93f3);
+            /* box-shadow: 8px 8px 16px #5a6fd8, -8px -8px 16px #7289fc; */
+        }
+        
+        /* 编辑按钮特殊样式 */
+        .edit-btn {
+            background: linear-gradient(145deg, #e6f3ff, #cce7ff);
+            box-shadow: 6px 6px 12px #a8c4d4, -6px -6px 12px #ffffff;
+            color: #2563eb !important;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+        }
+        
+        .edit-btn:hover {
+            background: linear-gradient(145deg, #cce7ff, #99d6ff);
+            box-shadow: inset 6px 6px 12px #a8c4d4, inset -6px -6px 12px #ffffff;
+            color: #1d4ed8 !important;
+            transform: translateY(2px);
+        }
+        
+        .edit-btn:active {
+            box-shadow: inset 6px 6px 12px #a8c4d4, inset -6px -6px 12px #ffffff;
+            transform: translateY(4px);
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="neumorphic-bg min-h-screen">
     <!-- 顶栏 -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
+    <header class="neumorphic-header sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 mr-4"><!-- 添加 mr-4 来创建右边距 -->
-                        <h1 class="text-2xl font-bold text-gray-900">君言工具站</h1>
+                <div class="flex items-center space-x-6">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            君言工具站
+                        </h1>
                     </div>
-                            <!-- 搜索栏 -->
+                    <!-- 搜索栏 -->
                     <div class="flex-shrink-0">
                         <div class="relative">
                             <input type="text" id="searchInput" placeholder="搜索工具..." 
-                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"><!-- 将 py-3 改为 py-2 -->
-                                <img src="icon/search.png" alt="搜索" width="24" height="12" class="absolute left-3 top-3 inline-block align-middle" />
+                                class="neumorphic-input w-80 pl-12 pr-4 py-3 rounded-2xl text-gray-700 placeholder-gray-500">
+                            <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -56,39 +169,39 @@
                 <nav class="hidden md:block">
                     <div class="flex items-center space-x-4">     
                         <!-- 默认工具显示 -->
-                        <div class="flex items-center space-x-2" id="defaultTools">
+                        <div class="flex items-center space-x-3" id="defaultTools">
                             <!-- 默认工具会通过JavaScript动态生成 -->
                         </div>
                         
                         <!-- 编辑默认工具按钮 -->
-                        <button onclick="openEditDefaultTools()" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="openEditDefaultTools()" class="edit-btn px-4 py-2 rounded-xl text-sm font-medium flex items-center space-x-2 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
-                            编辑
+                            <span>编辑</span>
                         </button>
                         
                         <!-- 编辑默认工具模态框 -->
-                        <div id="editDefaultToolsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+                        <div id="editDefaultToolsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 backdrop-blur-sm">
                             <div class="flex items-center justify-center min-h-screen p-4">
-                                <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-                                    <div class="flex items-center justify-between p-6 border-b">
-                                        <h3 class="text-lg font-semibold text-gray-900">编辑默认工具</h3>
-                                        <button onclick="closeEditDefaultTools()" class="text-gray-400 hover:text-gray-600">
+                                <div class="neumorphic-card rounded-3xl max-w-md w-full p-8">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h3 class="text-xl font-semibold text-gray-900">编辑默认工具</h3>
+                                        <button onclick="closeEditDefaultTools()" class="text-gray-400 hover:text-gray-600 transition-colors">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                             </svg>
                                         </button>
                                     </div>
-                                    <div class="p-6">
+                                    <div class="mb-6">
                                         <p class="text-sm text-gray-600 mb-4">选择最多3个工具作为默认显示：</p>
-                                        <div id="toolSelectionList" class="space-y-2 max-h-60 overflow-y-auto">
+                                        <div id="toolSelectionList" class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
                                             <!-- 工具选择列表会通过JavaScript动态生成 -->
                                         </div>
                                     </div>
-                                    <div class="flex justify-end space-x-3 p-6 border-t">
-                                        <button onclick="closeEditDefaultTools()" class="px-4 py-2 text-gray-600 hover:text-gray-800">取消</button>
-                                        <button onclick="saveDefaultTools()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">保存</button>
+                                    <div class="flex justify-end space-x-3">
+                                        <button onclick="closeEditDefaultTools()" class="neumorphic-btn px-6 py-2 rounded-xl text-gray-600 hover:text-gray-800 transition-colors">取消</button>
+                                        <button onclick="saveDefaultTools()" class="neumorphic-btn px-6 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all">保存</button>
                                     </div>
                                 </div>
                             </div>
@@ -98,8 +211,10 @@
 
                 <!-- 移动端菜单按钮 -->
                 <div class="md:hidden">
-                    <button class="text-gray-700 hover:text-blue-600 p-2">
-                        <i data-lucide="menu" class="h-6 w-6"></i>
+                    <button class="neumorphic-btn p-3 rounded-xl text-gray-700 hover:text-blue-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -107,33 +222,37 @@
     </header>
 
     <!-- 主内容区域 -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Hero区域 -->
-        <div class="text-center mb-12">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">群聊中常见的一些工具需求</h2>
-            <!-- <p class="text-xl text-gray-600 max-w-2xl mx-auto">提供各种实用的在线工具，提高工作效率</p> -->
+        <div class="text-center mb-5 float-animation">
+            <h2 class="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-6">
+                群聊中常见的一些工具需求
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                提供各种实用的在线工具，提高工作效率，解决日常问题
+            </p>
         </div>
 
         <!-- 工具分类 -->
-        <div class="mb-8">
-            <div class="flex flex-wrap justify-center gap-4">
-                <button onclick="filterTools('all')" class="filter-btn bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors">
+        <div class="mb-12">
+            <div class="flex flex-wrap justify-center gap-6">
+                <button onclick="filterTools('all')" class="filter-btn neumorphic-btn px-8 py-3 rounded-2xl text-gray-700 hover:text-blue-600 transition-all font-medium">
                     全部
                 </button>
-                <button onclick="filterTools('image')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                <button onclick="filterTools('image')" class="filter-btn neumorphic-btn px-8 py-3 rounded-2xl text-gray-700 hover:text-blue-600 transition-all font-medium">
                     图片工具
                 </button>
-                <button onclick="filterTools('text')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                <button onclick="filterTools('text')" class="filter-btn neumorphic-btn px-8 py-3 rounded-2xl text-gray-700 hover:text-blue-600 transition-all font-medium">
                     文本工具
                 </button>
-                <button onclick="filterTools('mulit')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                <button onclick="filterTools('mulit')" class="filter-btn neumorphic-btn px-8 py-3 rounded-2xl text-gray-700 hover:text-blue-600 transition-all font-medium">
                     批量工具
                 </button>
             </div>
         </div>
 
         <!-- 工具网格 -->
-        <div id="toolsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div id="toolsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <!-- 工具卡片会通过JavaScript动态生成 -->
         </div>
 
@@ -166,25 +285,25 @@
 
             toolsToRender.forEach(tool => {
                 const toolCard = document.createElement('div');
-                toolCard.className = 'tool-card bg-white rounded-lg shadow-md p-6 cursor-pointer border border-gray-200';
+                toolCard.className = 'neumorphic-card rounded-3xl p-8 cursor-pointer transition-all duration-300 hover:scale-105';
                 toolCard.onclick = () => openTool(tool.path);
                 
                 toolCard.innerHTML = `
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-blue-100 rounded-lg">
-                            <img src="icon/${tool.icon}.png" alt="${tool.name}图标" width="24" height="24" class="inline-block align-middle" />
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="tool-icon-container p-4 rounded-2xl">
+                            <img src="icon/${tool.icon}.png" alt="${tool.name}图标" width="32" height="32" class="w-8 h-8" />
                         </div>
                         <div class="relative">
-                            <div id="toolMenu${tool.id}" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 hidden">
-                                <div class="py-1">
-                                    <button onclick="event.stopPropagation(); editTool(${tool.id})" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-50 w-full text-left">编辑</button>
-                                    <button onclick="event.stopPropagation(); deleteTool(${tool.id})" class="text-red-600 block px-4 py-2 text-sm hover:bg-gray-50 w-full text-left">删除</button>
+                            <div id="toolMenu${tool.id}" class="absolute right-0 mt-2 w-48 neumorphic-card rounded-2xl p-2 z-10 hidden">
+                                <div class="space-y-1">
+                                    <button onclick="event.stopPropagation(); editTool(${tool.id})" class="w-full text-left px-4 py-2 rounded-xl text-gray-700 hover:bg-gray-50 text-sm transition-colors">编辑</button>
+                                    <button onclick="event.stopPropagation(); deleteTool(${tool.id})" class="w-full text-left px-4 py-2 rounded-xl text-red-600 hover:bg-red-50 text-sm transition-colors">删除</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">${tool.name}</h3>
-                    <p class="text-gray-600 text-sm">${tool.description}</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">${tool.name}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">${tool.description}</p>
                 `;
                 
                 grid.appendChild(toolCard);
@@ -202,9 +321,9 @@
             
             // 更新按钮样式
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.className = 'filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors';
+                btn.className = 'filter-btn neumorphic-btn px-8 py-3 rounded-2xl text-gray-700 hover:text-blue-600 transition-all font-medium';
             });
-            event.target.className = 'filter-btn bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors';
+            event.target.className = 'filter-btn neumorphic-btn px-8 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all font-medium';
             
             // 过滤工具
             const filteredTools = category === 'all' ? tools : tools.filter(tool => tool.category === category);
@@ -229,7 +348,6 @@
             
             renderTools(filteredTools);
         });
-
 
         // 切换工具菜单
         function toggleToolMenu(toolId) {
@@ -272,7 +390,7 @@
                     const toolLink = document.createElement('a');
                     toolLink.href = tool.path;
                     toolLink.target = '_blank';
-                    toolLink.className = 'text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors';
+                    toolLink.className = 'neumorphic-btn px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 transition-all text-sm font-medium';
                     toolLink.textContent = tool.name;
                     defaultToolsContainer.appendChild(toolLink);
                 }
@@ -289,7 +407,7 @@
             tools.forEach(tool => {
                 const isSelected = defaultTools.includes(tool.id);
                 const toolItem = document.createElement('div');
-                toolItem.className = 'flex items-center space-x-3 p-2 hover:bg-gray-50 rounded';
+                toolItem.className = 'flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-xl transition-colors';
                 toolItem.innerHTML = `
                     <input type="checkbox" id="tool_${tool.id}" value="${tool.id}" 
                            ${isSelected ? 'checked' : ''} 
@@ -344,4 +462,5 @@
         renderTools();
     </script>
 </body>
+</html>
 </html>

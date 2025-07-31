@@ -1,39 +1,83 @@
 <!-- 固定页头 -->
-<header class="page-header">
-    <div class="header-container">
-        <div class="header-inner">
+<header class="neumorphic-header sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
             <!-- Logo -->
-            <div class="logo">
-                <a href="../index.html" class="logo-link">我的工具站</a>
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <a href="../index.html" class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all">
+                        君言工具站
+                    </a>
+                </div>
             </div>
 
             <!-- 导航菜单 -->
-            <nav class="nav-desktop">
-                <div class="nav-list">
-                    <a href="../index.html" class="nav-link">首页</a>
-                    <a href="../index.html#tools" class="nav-link">所有工具</a>
+            <nav class="hidden md:block">
+                <div class="flex items-center space-x-4">
+                    <a href="../index.html" class="neumorphic-btn px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 transition-all font-medium">首页</a>
+                    <a href="../index.html#tools" class="neumorphic-btn px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 transition-all font-medium">所有工具</a>
                     
                     <!-- 常用工具下拉菜单 -->
-                    <div class="dropdown">
-                        <button class="dropdown-toggle">
-                            常用工具
-                            <i class="dropdown-icon" data-lucide="chevron-down"></i>
+                    <div class="relative group">
+                        <button class="neumorphic-btn px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 transition-all font-medium flex items-center space-x-2">
+                            <span>常用工具</span>
+                            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
                         </button>
-                        <div class="dropdown-menu">
-                            <a href="pdf-converter.html" class="dropdown-item">PDF转换器</a>
-                            <a href="image-compressor.html" class="dropdown-item">图片压缩</a>
-                            <a href="text-editor.html" class="dropdown-item">文本编辑器</a>
-                            <a href="code-formatter.html" class="dropdown-item">代码格式化</a>
-                            <a href="color-picker.html" class="dropdown-item">颜色选择器</a>
+                        <div class="absolute right-0 mt-2 w-56 neumorphic-card rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                            <div class="space-y-1">
+                                <a href="pdf-converter.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">PDF转换器</a>
+                                <a href="image-compressor.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">图片压缩</a>
+                                <a href="text-editor.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">文本编辑器</a>
+                                <a href="code-formatter.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">代码格式化</a>
+                                <a href="color-picker.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">颜色选择器</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </nav>
 
             <!-- 移动端菜单按钮 -->
-            <div class="mobile-menu-btn">
-                <i data-lucide="menu"></i>
+            <div class="md:hidden">
+                <button class="neumorphic-btn p-3 rounded-xl text-gray-700 hover:text-blue-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
 </header>
+
+<style>
+/* 拟物风头部 */
+.neumorphic-header {
+    background: linear-gradient(145deg, #ffffff, #f0f0f3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* 拟物风按钮 */
+.neumorphic-btn {
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff;
+    transition: all 0.2s ease;
+}
+
+.neumorphic-btn:hover {
+    box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+    transform: translateY(2px);
+}
+
+.neumorphic-btn:active {
+    box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+    transform: translateY(4px);
+}
+
+/* 拟物风卡片 */
+.neumorphic-card {
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+</style>
