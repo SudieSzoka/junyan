@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link rel="stylesheet" href="styles/common.css">
+  <link rel="stylesheet" href="themes/default.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关键词搜索</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neumorphic': {
+                            'light': '#f0f0f3',
+                            'dark': '#d1d9e6',
+                            'shadow': '#a3b1c6'
+                        }
+                    },
+                    boxShadow: {
+                        'neumorphic': '20px 20px 60px #bebebe, -20px -20px 60px #ffffff',
+                        'neumorphic-inset': 'inset 20px 20px 60px #bebebe, inset -20px -20px 60px #ffffff',
+                        'neumorphic-pressed': 'inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 拟物风背景渐变 */
+        .neumorphic-bg {
+            background: linear-gradient(145deg, #e6e6e6, #ffffff);
+        }
+        
+        /* 拟物风卡片 */
+        .neumorphic-card {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .neumorphic-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 25px 25px 75px #bebebe, -25px -25px 75px #ffffff;
+        }
+        
+        /* 拟物风按钮 */
+        .neumorphic-btn {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff;
+            transition: all 0.2s ease;
+        }
+        
+        .neumorphic-btn:hover {
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            transform: translateY(2px);
+        }
+        
+        .neumorphic-btn:active {
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            transform: translateY(4px);
+        }
+        
+        /* 拟物风输入框 */
+        .neumorphic-input {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .neumorphic-input:focus {
+            box-shadow: inset 8px 8px 16px #bebebe, inset -8px -8px 16px #ffffff;
+            outline: none;
+        }
+        
+        /* 搜索按钮特殊样式 */
+        .search-btn {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            color: white !important;
+        }
+        
+        .search-btn:hover {
+            background: linear-gradient(145deg, #45a049, #388e3c);
+            color: white !important;
+            transform: translateY(2px);
+        }
+        
+        /* 下载按钮特殊样式 */
+        .download-btn {
+            background: linear-gradient(145deg, #2196F3, #1976D2);
+            color: white !important;
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(145deg, #1976D2, #1565c0);
+            color: white !important;
+            transform: translateY(2px);
+        }
+        
+        /* 结果列表项样式 */
+        .result-item {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            box-shadow: 2px 2px 4px #d1d9e6, -2px -2px 4px #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .result-item:hover {
+            background: linear-gradient(145deg, #f0f0f3, #e6e6e6);
+            box-shadow: 4px 4px 8px #d1d9e6, -4px -4px 8px #ffffff;
+            transform: translateX(8px);
+        }
+        
+        /* 自定义滚动条 */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(145deg, #d1d9e6, #a3b1c6);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(145deg, #a3b1c6, #8a9bb3);
+        }
+        
+        /* 动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+</head>
+<body class="neumorphic-bg min-h-screen">
+<!-- COMMON_HEADER -->
+<!-- 固定页头 -->
+<header class="neumorphic-header sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+            <!-- Logo -->
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <a href="../index.html" class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all">
+                        君言工具站
+                    </a>
+                </div>
+            </div>
+
+            <!-- 导航菜单 -->
+            <nav class="hidden md:block">
+                <div class="flex items-center space-x-4">
+                    <a href="../index.html" class="neumorphic-btn px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 transition-all font-medium">首页</a>
+                    <a href="../index.html#tools" class="neumorphic-btn px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 transition-all font-medium">所有工具</a>
+                    
+                    <!-- 常用工具下拉菜单 -->
+                    <div class="relative group">
+                        <button class="neumorphic-btn px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 transition-all font-medium flex items-center space-x-2">
+                            <span>常用工具</span>
+                            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-56 neumorphic-card rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                            <div class="space-y-1">
+                                <a href="pdf-converter.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">PDF转换器</a>
+                                <a href="image-compressor.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">图片压缩</a>
+                                <a href="text-editor.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">文本编辑器</a>
+                                <a href="code-formatter.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">代码格式化</a>
+                                <a href="color-picker.html" class="block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all text-sm">颜色选择器</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 移动端菜单按钮 -->
+            <div class="md:hidden">
+                <button class="neumorphic-btn p-3 rounded-xl text-gray-700 hover:text-blue-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+/* 拟物风头部 */
+.neumorphic-header {
+    background: linear-gradient(145deg, #ffffff, #f0f0f3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+</style>
+<!-- END_COMMON_HEADER -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- 标题区域 -->
+        <div class="text-center mb-8 float-animation">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-4">
+                抖音关键词搜索
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                输入关键词，获取相关的搜索建议和热门词汇
+            </p>
+        </div>
+
+        <!-- 搜索容器 -->
+        <div class="neumorphic-card rounded-3xl p-8 mb-8">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <input type="text" id="searchInput" placeholder="请输入关键词..." 
+                    class="neumorphic-input flex-1 px-6 py-4 rounded-2xl text-gray-700 placeholder-gray-500 text-lg">
+                <div class="flex gap-4">
+                    <button id="searchButton" class="search-btn neumorphic-btn px-8 py-4 rounded-2xl text-lg font-medium transition-all">
+                        搜索
+                    </button>
+                    <button id="downloadButton" class="download-btn neumorphic-btn px-8 py-4 rounded-2xl text-lg font-medium transition-all">
+                        下载Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果列表 -->
+        <div class="neumorphic-card rounded-3xl p-6">
+            <ul id="resultList" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar"></ul>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const resultList = document.getElementById('resultList');
+        const API_URL = 'https://dy-keyword-sug-rboawhtqcz.cn-zhangjiakou.fcapp.run';
+
+        function jsonp(url, data) {
+            return new Promise((resolve, reject) => {
+                // 创建一个唯一的回调函数名
+                const callbackName = 'jsonp_' + Date.now();
+                
+                // 创建 script 标签
+                const script = document.createElement('script');
+                
+                // 设置全局回调函数
+                window[callbackName] = (response) => {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    resolve(response);
+                };
+
+                // 构建 URL
+                const params = new URLSearchParams({
+                    ...data,
+                    callback: callbackName
+                });
+                script.src = `${url}?${params.toString()}`;
+                
+                // 处理错误
+                script.onerror = () => {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    reject(new Error('JSONP request failed'));
+                };
+
+                // 添加到文档中
+                document.body.appendChild(script);
+            });
+        }
+
+        async function performSearch() {
+            const keyword = searchInput.value.trim();
+            if (!keyword) return;
+
+            try {
+                resultList.innerHTML = '<li class="result-item p-4 rounded-2xl text-gray-600 text-center">搜索中...</li>';
+                
+                const data = await jsonp(API_URL, { keyword });
+                
+                // 清空之前的结果
+                resultList.innerHTML = '';
+                
+                // 显示新结果
+                if (Array.isArray(data)) {
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'result-item p-4 rounded-2xl text-gray-700 cursor-pointer transition-all';
+                        li.textContent = item;
+                        li.onclick = () => {
+                            searchInput.value = item;
+                            performSearch();
+                        };
+                        resultList.appendChild(li);
+                    });
+                } else {
+                    resultList.innerHTML = '<li class="result-item p-4 rounded-2xl text-gray-600 text-center">没有找到相关结果</li>';
+                }
+            } catch (error) {
+                console.error('搜索出错:', error);
+                resultList.innerHTML = '<li class="result-item p-4 rounded-2xl text-red-600 text-center">搜索失败，请稍后重试</li>';
+            }
+        }
+
+        // 添加下载Excel功能
+        function downloadExcel(data) {
+            if (!data || data.length === 0) {
+                alert('没有数据可供下载');
+                return;
+            }
+
+            // 创建工作簿
+            const wb = XLSX.utils.book_new();
+            
+            // 将数据转换为工作表格式
+            const wsData = data.map(item => [item]);
+            wsData.unshift(['关键词']); // 添加表头
+            
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // 设置列宽
+            ws['!cols'] = [{ wch: 20 }];
+            
+            // 将工作表添加到工作簿
+            XLSX.utils.book_append_sheet(wb, ws, '关键词列表');
+            
+            // 生成Excel文件并下载
+            const fileName = searchInput.value.trim() || '搜索结果';
+            XLSX.writeFile(wb, `${fileName}.xlsx`);
+        }
+
+        // 绑定下载按钮事件
+        document.getElementById('downloadButton').addEventListener('click', () => {
+            const items = Array.from(resultList.children).map(li => li.textContent);
+            downloadExcel(items);
+        });
+
+        // 绑定搜索按钮点击事件
+        searchButton.addEventListener('click', performSearch);
+
+        // 绑定回车键事件
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    </script>
+<!-- COMMON_FOOTER -->
+<!-- 固定页脚 -->
+<footer class="neumorphic-footer mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <!-- 品牌信息 -->
+            <div class="lg:col-span-2">
+                <a href="../index.html" class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all mb-6 inline-block">
+                    君言工具站
+                </a>
+                <p class="text-gray-600 text-lg leading-relaxed max-w-md">
+                    提供高质量、免费的在线工具，帮助您提高工作效率，解决日常问题。
+                </p>
+                <div class="mt-8 flex space-x-4">
+                    <a href="#" class="neumorphic-btn p-3 rounded-xl text-gray-700 hover:text-blue-600 transition-all">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="neumorphic-btn p-3 rounded-xl text-gray-700 hover:text-blue-600 transition-all">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="neumorphic-btn p-3 rounded-xl text-gray-700 hover:text-blue-600 transition-all">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 产品链接 -->
+            <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-6">产品</h3>
+                <ul class="space-y-4">
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">所有工具</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">热门工具</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">新工具</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">API</a></li>
+                </ul>
+            </div>
+            
+            <!-- 资源链接 -->
+            <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-6">资源</h3>
+                <ul class="space-y-4">
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">帮助中心</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">使用教程</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">博客</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">更新日志</a></li>
+                </ul>
+            </div>
+            
+            <!-- 公司链接 -->
+            <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-6">公司</h3>
+                <ul class="space-y-4">
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">关于我们</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">联系我们</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">隐私政策</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">服务条款</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部版权信息 -->
+    <div class="neumorphic-footer-bottom">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <p class="text-gray-600 text-sm">© 2024 君言工具站 版权所有</p>
+                <div class="flex space-x-6 text-sm text-gray-600">
+                    <a href="#" class="hover:text-blue-600 transition-colors">隐私政策</a>
+                    <a href="#" class="hover:text-blue-600 transition-colors">服务条款</a>
+                    <a href="#" class="hover:text-blue-600 transition-colors">Cookie政策</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+/* 拟物风页脚 */
+.neumorphic-footer {
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.neumorphic-footer-bottom {
+    background: linear-gradient(145deg, #ffffff, #f0f0f3);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+</style>
+<!-- END_COMMON_FOOTER -->
+</body>
+</html>

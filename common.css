@@ -406,7 +406,7 @@ body {
 }
 
 /* 拟物风按钮通用样式 */
-.neumorphic-btn {
+/* .neumorphic-btn {
     background: linear-gradient(145deg, #ffffff, #e6e6e6);
     box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff;
     border: none;
@@ -427,7 +427,7 @@ body {
 .neumorphic-btn:active {
     box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
     transform: translateY(4px);
-}
+} */
 
 /* 拟物风输入框 */
 .neumorphic-input {

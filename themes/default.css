@@ -55,30 +55,6 @@
     box-shadow: 25px 25px 75px #bebebe, -25px -25px 75px #ffffff;
 }
 
-/* 拟物风按钮样式 */
-.theme-default .neumorphic-btn {
-    background: linear-gradient(145deg, #ffffff, #e6e6e6);
-    box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 24px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.theme-default .neumorphic-btn:hover {
-    box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
-    transform: translateY(2px);
-}
-
-.theme-default .neumorphic-btn:active {
-    box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
-    transform: translateY(4px);
-}
-
 /* 拟物风输入框样式 */
 .theme-default .neumorphic-input {
     background: linear-gradient(145deg, #ffffff, #e6e6e6);
