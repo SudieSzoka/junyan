@@ -6,32 +6,7 @@
     <title>君言社区工具站</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .dropdown {
-        position: relative;
-        display: inline-block;
-        }
 
-        .dropdown-menu {
-        display: none;
-        position: absolute;
-        right: 0;
-        min-width: 160px;
-        }
-
-        /* 关键部分：悬停时显示菜单 */
-        .dropdown:hover .dropdown-menu {
-        display: block;
-        }
-
-        /* 确保菜单和按钮之间有连接区域 */
-        .dropdown > button:after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        right: 0;
-        height: 10px;
-        }
         .tool-card {
             transition: all 0.3s ease;
         }
@@ -79,25 +54,42 @@
 
                 <!-- 导航菜单 -->
                 <nav class="hidden md:block">
-                    <div class="flex items-center space-x-4">
-                        <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">首页</a>
-                        <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">所有工具</a>
+                    <div class="flex items-center space-x-4">     
+                        <!-- 默认工具显示 -->
+                        <div class="flex items-center space-x-2" id="defaultTools">
+                            <!-- 默认工具会通过JavaScript动态生成 -->
+                        </div>
                         
-                        <!-- 自定义常用工具下拉菜单 -->
-                        <div class="relative dropdown">
-                            <button class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                                常用工具
-                                <img src="icon/chevron-down.png" alt="下拉" width="16" height="16" class="ml-1 inline-block align-middle" />
-                            </button>
-                            <div class="dropdown-menu absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                                <div class="py-1" id="favoriteTools">
-                                    <a href="tools/pdf-converter.html" target="_blank" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-50">PDF转换器</a>
-                                    <a href="#" target="_blank" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-50">图片压缩</a>
-                                    <a href="#" target="_blank" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-50">文本编辑器</a>
-                                    <hr class="my-1">
-                                    <button onclick="addFavoriteTool()" class="text-blue-600 block w-full text-left px-4 py-2 text-sm hover:bg-gray-50">
-                                        <i data-lucide="plus" class="inline h-4 w-4 mr-2"></i>添加常用工具
-                                    </button>
+                        <!-- 编辑默认工具按钮 -->
+                        <button onclick="openEditDefaultTools()" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            编辑
+                        </button>
+                        
+                        <!-- 编辑默认工具模态框 -->
+                        <div id="editDefaultToolsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+                            <div class="flex items-center justify-center min-h-screen p-4">
+                                <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                                    <div class="flex items-center justify-between p-6 border-b">
+                                        <h3 class="text-lg font-semibold text-gray-900">编辑默认工具</h3>
+                                        <button onclick="closeEditDefaultTools()" class="text-gray-400 hover:text-gray-600">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="p-6">
+                                        <p class="text-sm text-gray-600 mb-4">选择最多3个工具作为默认显示：</p>
+                                        <div id="toolSelectionList" class="space-y-2 max-h-60 overflow-y-auto">
+                                            <!-- 工具选择列表会通过JavaScript动态生成 -->
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-end space-x-3 p-6 border-t">
+                                        <button onclick="closeEditDefaultTools()" class="px-4 py-2 text-gray-600 hover:text-gray-800">取消</button>
+                                        <button onclick="saveDefaultTools()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">保存</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -158,6 +150,7 @@
                 // 只保留show为true的工具
                 tools = data.filter(tool => tool.show);
                 renderTools();
+                loadDefaultTools(); // 在工具数据加载完成后加载默认工具
             } catch (error) {
                 console.error('加载工具数据失败:', error);
             }
@@ -253,6 +246,100 @@
             }
         });
 
+        // 默认工具相关功能
+        let defaultTools = [];
+        
+        // 从本地存储加载默认工具
+        function loadDefaultTools() {
+            const saved = localStorage.getItem('defaultTools');
+            if (saved) {
+                defaultTools = JSON.parse(saved);
+            } else {
+                // 如果没有保存的默认工具，使用前3个工具作为默认
+                defaultTools = tools.slice(0, 3).map(tool => tool.id);
+            }
+            renderDefaultTools();
+        }
+        
+        // 渲染默认工具
+        function renderDefaultTools() {
+            const defaultToolsContainer = document.getElementById('defaultTools');
+            defaultToolsContainer.innerHTML = '';
+            
+            defaultTools.forEach(toolId => {
+                const tool = tools.find(t => t.id === toolId);
+                if (tool) {
+                    const toolLink = document.createElement('a');
+                    toolLink.href = tool.path;
+                    toolLink.target = '_blank';
+                    toolLink.className = 'text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors';
+                    toolLink.textContent = tool.name;
+                    defaultToolsContainer.appendChild(toolLink);
+                }
+            });
+        }
+        
+        // 打开编辑默认工具模态框
+        function openEditDefaultTools() {
+            const modal = document.getElementById('editDefaultToolsModal');
+            const toolSelectionList = document.getElementById('toolSelectionList');
+            
+            // 生成工具选择列表
+            toolSelectionList.innerHTML = '';
+            tools.forEach(tool => {
+                const isSelected = defaultTools.includes(tool.id);
+                const toolItem = document.createElement('div');
+                toolItem.className = 'flex items-center space-x-3 p-2 hover:bg-gray-50 rounded';
+                toolItem.innerHTML = `
+                    <input type="checkbox" id="tool_${tool.id}" value="${tool.id}" 
+                           ${isSelected ? 'checked' : ''} 
+                           onchange="updateToolSelection()"
+                           class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <label for="tool_${tool.id}" class="text-sm text-gray-700 cursor-pointer flex-1">
+                        ${tool.name}
+                    </label>
+                `;
+                toolSelectionList.appendChild(toolItem);
+            });
+            
+            modal.classList.remove('hidden');
+        }
+        
+        // 关闭编辑默认工具模态框
+        function closeEditDefaultTools() {
+            const modal = document.getElementById('editDefaultToolsModal');
+            modal.classList.add('hidden');
+        }
+        
+        // 更新工具选择状态
+        function updateToolSelection() {
+            const checkboxes = document.querySelectorAll('#toolSelectionList input[type="checkbox"]:checked');
+            if (checkboxes.length > 3) {
+                // 如果选择超过3个，取消最后一个选择
+                checkboxes[checkboxes.length - 1].checked = false;
+                alert('最多只能选择3个默认工具');
+            }
+        }
+        
+        // 保存默认工具
+        function saveDefaultTools() {
+            const selectedTools = Array.from(document.querySelectorAll('#toolSelectionList input[type="checkbox"]:checked'))
+                .map(checkbox => parseInt(checkbox.value));
+            
+            defaultTools = selectedTools;
+            localStorage.setItem('defaultTools', JSON.stringify(defaultTools));
+            renderDefaultTools();
+            closeEditDefaultTools();
+        }
+        
+        // 点击模态框外部关闭
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('editDefaultToolsModal');
+            if (e.target === modal) {
+                closeEditDefaultTools();
+            }
+        });
+        
         // 初始化
         renderTools();
     </script>
