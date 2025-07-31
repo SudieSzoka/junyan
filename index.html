@@ -325,8 +325,11 @@
             });
             event.target.className = 'filter-btn neumorphic-btn px-8 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all font-medium';
             
-            // 过滤工具
-            const filteredTools = category === 'all' ? tools : tools.filter(tool => tool.category === category);
+            // 过滤工具 - 支持数组格式的分类
+            const filteredTools = category === 'all' ? tools : tools.filter(tool => {
+                // 检查工具的分类数组是否包含当前选中的分类
+                return Array.isArray(tool.category) ? tool.category.includes(category) : tool.category === category;
+            });
             renderTools(filteredTools);
         }
 
@@ -336,7 +339,10 @@
             let filteredTools = tools;
             
             if (currentFilter !== 'all') {
-                filteredTools = tools.filter(tool => tool.category === currentFilter);
+                filteredTools = tools.filter(tool => {
+                    // 检查工具的分类数组是否包含当前选中的分类
+                    return Array.isArray(tool.category) ? tool.category.includes(currentFilter) : tool.category === currentFilter;
+                });
             }
             
             if (searchTerm) {

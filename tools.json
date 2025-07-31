@@ -4,8 +4,17 @@
       "name": "抖音下拉关键词",
       "description": "输入关键词，拼接0~9、a~z，获得下拉关键词",
       "path": "tools/douyin_keyword_sug.html",
-      "category": "douyin",
+      "category": ["text"],
       "icon": "douyin_keyword_sug",
+      "show": true
+    },
+    {
+      "id": 2,
+      "name": "聊天图片生成器",
+      "description": "上传Excel文件，生成微信聊天界面图片，支持文本和图片消息,可批量",
+      "path": "tools/weixin_chat_imgCreat.html",
+      "category": ["image", "mulit"],
+      "icon": "weixin_chat_imgCreat",
       "show": true
     }
   ]
