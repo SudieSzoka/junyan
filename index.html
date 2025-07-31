@@ -1,40 +1,260 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>君言测试网站</title>
-    <link rel="stylesheet" href="styles/main.css">
-</head>
-<body>
-    <nav>
-        <div class="nav-container">
-            <h1>君言测试网站</h1>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="搜索...">
-            </div>
-            <a href="https://jn6074dvza.feishu.cn/share/base/form/shrcnJ1irL036G3oqo4uYq0C4qh" class="submit-btn">提交需求</a>
-        </div>
-    </nav>
+    <title>君言社区工具站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .dropdown {
+        position: relative;
+        display: inline-block;
+        }
 
-    <main>
-        <!-- <div class="filters">
-            <button class="filter-btn active" data-filter="all">全部</button>
-            <button class="filter-btn" data-filter="finished">已完成</button>
-            <button class="filter-btn" data-filter="unfinished">未完成</button>
-        </div> -->
-        
-        <section class="finished-section">
-            <h2>已完成</h2>
-            <div class="cards-container" id="finishedContainer"></div>
-        </section>
-    
-        <section class="unfinished-section">
-            <h2>未完成</h2>
-            <div class="cards-container" id="unfinishedContainer"></div>
-        </section>
+        .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        min-width: 160px;
+        }
+
+        /* 关键部分：悬停时显示菜单 */
+        .dropdown:hover .dropdown-menu {
+        display: block;
+        }
+
+        /* 确保菜单和按钮之间有连接区域 */
+        .dropdown > button:after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        right: 0;
+        height: 10px;
+        }
+        .tool-card {
+            transition: all 0.3s ease;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 顶栏 -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 mr-4"><!-- 添加 mr-4 来创建右边距 -->
+                        <h1 class="text-2xl font-bold text-gray-900">君言工具站</h1>
+                    </div>
+                            <!-- 搜索栏 -->
+                    <div class="flex-shrink-0">
+                        <div class="relative">
+                            <input type="text" id="searchInput" placeholder="搜索工具..." 
+                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"><!-- 将 py-3 改为 py-2 -->
+                                <img src="icon/search.png" alt="搜索" width="24" height="12" class="absolute left-3 top-3 inline-block align-middle" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 导航菜单 -->
+                <nav class="hidden md:block">
+                    <div class="flex items-center space-x-4">
+                        <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">首页</a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">所有工具</a>
+                        
+                        <!-- 自定义常用工具下拉菜单 -->
+                        <div class="relative dropdown">
+                            <button class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                                常用工具
+                                <img src="icon/chevron-down.png" alt="下拉" width="16" height="16" class="ml-1 inline-block align-middle" />
+                            </button>
+                            <div class="dropdown-menu absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                                <div class="py-1" id="favoriteTools">
+                                    <a href="tools/pdf-converter.html" target="_blank" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-50">PDF转换器</a>
+                                    <a href="#" target="_blank" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-50">图片压缩</a>
+                                    <a href="#" target="_blank" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-50">文本编辑器</a>
+                                    <hr class="my-1">
+                                    <button onclick="addFavoriteTool()" class="text-blue-600 block w-full text-left px-4 py-2 text-sm hover:bg-gray-50">
+                                        <i data-lucide="plus" class="inline h-4 w-4 mr-2"></i>添加常用工具
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button class="text-gray-700 hover:text-blue-600 p-2">
+                        <i data-lucide="menu" class="h-6 w-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Hero区域 -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">群聊中常见的一些工具需求</h2>
+            <!-- <p class="text-xl text-gray-600 max-w-2xl mx-auto">提供各种实用的在线工具，提高工作效率</p> -->
+        </div>
+
+        <!-- 工具分类 -->
+        <div class="mb-8">
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="filterTools('all')" class="filter-btn bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors">
+                    全部
+                </button>
+                <button onclick="filterTools('image')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                    图片工具
+                </button>
+                <button onclick="filterTools('text')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                    文本工具
+                </button>
+                <button onclick="filterTools('mulit')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
+                    批量工具
+                </button>
+            </div>
+        </div>
+
+        <!-- 工具网格 -->
+        <div id="toolsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- 工具卡片会通过JavaScript动态生成 -->
+        </div>
+
     </main>
 
-    <script src="scripts/main.js"></script>
+    <script>
+        // 工具数据存储
+        let tools = [];
+        // 异步加载工具数据
+        async function loadTools() {
+            try {
+                const response = await fetch('tools.json');
+                const data = await response.json();
+                // 只保留show为true的工具
+                tools = data.filter(tool => tool.show);
+                renderTools();
+            } catch (error) {
+                console.error('加载工具数据失败:', error);
+            }
+        }
+        loadTools(); // 只调用异步加载
+        // 当前过滤器
+        let currentFilter = 'all';
+
+        // 渲染工具网格
+        function renderTools(toolsToRender = tools) {
+            const grid = document.getElementById('toolsGrid');
+            grid.innerHTML = '';
+
+            toolsToRender.forEach(tool => {
+                const toolCard = document.createElement('div');
+                toolCard.className = 'tool-card bg-white rounded-lg shadow-md p-6 cursor-pointer border border-gray-200';
+                toolCard.onclick = () => openTool(tool.path);
+                
+                toolCard.innerHTML = `
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <img src="icon/${tool.icon}.png" alt="${tool.name}图标" width="24" height="24" class="inline-block align-middle" />
+                        </div>
+                        <div class="relative">
+                            <div id="toolMenu${tool.id}" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 hidden">
+                                <div class="py-1">
+                                    <button onclick="event.stopPropagation(); editTool(${tool.id})" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-50 w-full text-left">编辑</button>
+                                    <button onclick="event.stopPropagation(); deleteTool(${tool.id})" class="text-red-600 block px-4 py-2 text-sm hover:bg-gray-50 w-full text-left">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">${tool.name}</h3>
+                    <p class="text-gray-600 text-sm">${tool.description}</p>
+                `;
+                
+                grid.appendChild(toolCard);
+            });
+        }
+
+        // 打开工具
+        function openTool(path) {
+            window.open(path, '_blank');
+        }
+
+        // 过滤工具
+        function filterTools(category) {
+            currentFilter = category;
+            
+            // 更新按钮样式
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = 'filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors';
+            });
+            event.target.className = 'filter-btn bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors';
+            
+            // 过滤工具
+            const filteredTools = category === 'all' ? tools : tools.filter(tool => tool.category === category);
+            renderTools(filteredTools);
+        }
+
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            let filteredTools = tools;
+            
+            if (currentFilter !== 'all') {
+                filteredTools = tools.filter(tool => tool.category === currentFilter);
+            }
+            
+            if (searchTerm) {
+                filteredTools = filteredTools.filter(tool => 
+                    tool.name.toLowerCase().includes(searchTerm) || 
+                    tool.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderTools(filteredTools);
+        });
+
+
+        // 切换工具菜单
+        function toggleToolMenu(toolId) {
+            const menu = document.getElementById(`toolMenu${toolId}`);
+            menu.classList.toggle('hidden');
+        }
+
+        // 点击外部关闭菜单
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('[id^="toolMenu"]').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+
+        // 初始化
+        renderTools();
+    </script>
 </body>
 </html>

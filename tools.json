@@ -1,0 +1,11 @@
+[
+    {
+      "id": 1,
+      "name": "图片自动分割",
+      "description": "将图片自动分割为小图片",
+      "path": "tools/image-auto-split-small.html",
+      "category": "image",
+      "icon": "image-split-small",
+      "show": true
+    }
+  ]
