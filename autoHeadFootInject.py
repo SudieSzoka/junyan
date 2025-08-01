@@ -10,13 +10,14 @@ FOOTER_PATH = "footer.html"   # 脚部模板文件
 COMMON_CSS_PATH = "common.css" # 公共样式文件
 THEMES_DIR = "themes"         # 主题目录
 
-def inject_templates(theme="default", add_css=True):
+def inject_templates(theme="default", add_css=True, add_favicon=True):
     """
     从源目录读取HTML文件，注入模板后保存到输出目录
     
     参数:
     theme: 使用的主题名称 (default, dark, minimal 等)
     add_css: 是否自动添加公共CSS链接
+    add_favicon: 是否自动添加favicon链接
     """
     # 确保输出目录存在
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -85,6 +86,16 @@ def inject_templates(theme="default", add_css=True):
                 content = content.replace(
                     head_match.group(0), 
                     head_match.group(0) + css_link
+                )
+        
+        # 添加favicon链接
+        if add_favicon:
+            head_match = re.search(r'(<head[^>]*>)', content, re.IGNORECASE)
+            if head_match:
+                favicon_link = '\n  <link rel="icon" type="image/png" href="/res/pyq/junyan.png">'
+                content = content.replace(
+                    head_match.group(0), 
+                    head_match.group(0) + favicon_link
                 )
         
         # 保存到输出目录
@@ -158,6 +169,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='HTML模板注入工具')
     parser.add_argument('--theme', default='default', help='使用的主题名称')
     parser.add_argument('--no-css', action='store_true', help='不添加CSS链接')
+    parser.add_argument('--no-favicon', action='store_true', help='不添加favicon链接')
     parser.add_argument('--create-theme', help='创建新主题，格式: 主题名,主色,辅色')
     
     args = parser.parse_args()
@@ -171,7 +183,7 @@ if __name__ == "__main__":
         exit()
     
     print("开始处理HTML文件...")
-    processed = inject_templates(theme=args.theme, add_css=not args.no_css)
+    processed = inject_templates(theme=args.theme, add_css=not args.no_css, add_favicon=not args.no_favicon)
     print(f"\n操作完成! 已处理 {processed} 个HTML文件。")
     print(f"源目录: {ORIGIN_DIR} → 输出目录: {OUTPUT_DIR}")
     print(f"使用主题: {args.theme}")
