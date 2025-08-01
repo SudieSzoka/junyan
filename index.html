@@ -138,6 +138,26 @@
             box-shadow: inset 6px 6px 12px #a8c4d4, inset -6px -6px 12px #ffffff;
             transform: translateY(4px);
         }
+        
+        /* 提新需求按钮特殊样式 */
+        .requirement-btn {
+            background: linear-gradient(145deg, #fff3e0, #ffe0b2);
+            box-shadow: 6px 6px 12px #d4b08c, -6px -6px 12px #ffffff;
+            color: #f57c00 !important;
+            border: 1px solid rgba(245, 124, 0, 0.1);
+        }
+        
+        .requirement-btn:hover {
+            background: linear-gradient(145deg, #ffe0b2, #ffcc80);
+            box-shadow: inset 6px 6px 12px #d4b08c, inset -6px -6px 12px #ffffff;
+            color: #e65100 !important;
+            transform: translateY(2px);
+        }
+        
+        .requirement-btn:active {
+            box-shadow: inset 6px 6px 12px #d4b08c, inset -6px -6px 12px #ffffff;
+            transform: translateY(4px);
+        }
 
         /* 密码验证模态框样式 */
         .password-modal {
@@ -256,6 +276,14 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                 </svg>
                                 <span>编辑</span>
+                            </button>
+                            
+                            <!-- 提新需求按钮 -->
+                            <button onclick="openNewRequirement()" class="requirement-btn px-4 py-2 rounded-xl text-sm font-medium flex items-center space-x-2 transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                <span>提新需求</span>
                             </button>
                             
                             <!-- 编辑默认工具模态框 -->
@@ -624,6 +652,11 @@
                 closeEditDefaultTools();
             }
         });
+        
+        // 打开提新需求链接
+        function openNewRequirement() {
+            window.open('https://jn6074dvza.feishu.cn/share/base/form/shrcnJ1irL036G3oqo4uYq0C4qh', '_blank');
+        }
         
         // 页面初始化
         document.addEventListener('DOMContentLoaded', function() {
