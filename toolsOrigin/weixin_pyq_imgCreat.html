@@ -269,7 +269,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">顶部图片文件名</label>
-                    <input type="text" id="topImageFile" value="" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="顶部图片文件名（可选）">
+                    <input type="text" id="topImageFile" value="top.jpg" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="顶部图片文件名（可选）">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">时间字体大小</label>
@@ -303,11 +303,81 @@
                 <!-- 尺寸配置 -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">图片宽度</label>
-                    <input type="number" id="imageWidth" value="375" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="375">
+                    <input type="number" id="imageWidth" value="1080" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="375">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">图片高度</label>
-                    <input type="number" id="imageHeight" value="812" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="812">
+                    <input type="number" id="imageHeight" value="2400" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="812">
+                </div>
+                
+                <!-- 缩放系数配置 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">头像大小系数（图片宽度比例）</label>
+                    <input type="number" id="avatarSizeRatio" value="0.107" min="0.05" max="0.2" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">发布者姓名字体系数</label>
+                    <input type="number" id="publisherNameFontRatio" value="0.043" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">内容文字字体系数</label>
+                    <input type="number" id="contentFontRatio" value="0.043" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">时间文字字体系数</label>
+                    <input type="number" id="timeFontRatio" value="0.037" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评论者姓名字体系数</label>
+                    <input type="number" id="commentNameFontRatio" value="0.037" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评论内容字体系数</label>
+                    <input type="number" id="commentContentFontRatio" value="0.037" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞图标大小系数</label>
+                    <input type="number" id="likeIconSizeRatio" value="0.043" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞者头像大小系数</label>
+                    <input type="number" id="likerAvatarSizeRatio" value="0.053" min="0.03" max="0.1" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">配图大小系数（单张图片宽度比例）</label>
+                    <input type="number" id="contentImageSizeRatio" value="0.296" min="0.2" max="0.4" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">左边距系数</label>
+                    <input type="number" id="leftMarginRatio" value="0.04" min="0.02" max="0.1" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">右边距系数</label>
+                    <input type="number" id="rightMarginRatio" value="0.04" min="0.02" max="0.1" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">头像与文字间距系数</label>
+                    <input type="number" id="avatarTextSpacingRatio" value="0.027" min="0.01" max="0.05" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">内容行间距系数</label>
+                    <input type="number" id="contentLineSpacingRatio" value="0.053" min="0.03" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">图片间距系数</label>
+                    <input type="number" id="imageSpacingRatio" value="0.013" min="0.005" max="0.03" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞者头像间距系数</label>
+                    <input type="number" id="likerSpacingRatio" value="0.013" min="0.005" max="0.03" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评论行间距系数</label>
+                    <input type="number" id="commentLineSpacingRatio" value="0.048" min="0.03" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评论间距系数</label>
+                    <input type="number" id="commentSpacingRatio" value="0.021" min="0.01" max="0.05" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
                 </div>
             </div>
         </div>
@@ -322,7 +392,7 @@
                         <li>• 第一行为标题行，必须包含：index, type, content</li>
                         <li>• 第2-8行为配置行，用于设置朋友圈参数</li>
                         <li>• 第9行开始为朋友圈记录</li>
-                        <li>• 配置项包括：publisher_name, publish_time, avatar_file, content, content_images, top_image_file, time_font_size, time_left_ratio, time_right_ratio, like_count, likers, comments</li>
+                        <li>• 配置项包括：publisher_name, publish_time, avatar_file, content, content_images, top_image_file, time_font_size, time_left_ratio, time_right_ratio, like_count, likers, comments, 以及各种缩放系数</li>
                     </ul>
                 </div>
                 <div>
@@ -333,6 +403,7 @@
                         <li>• <strong>顶部图片</strong>：支持自定义顶部图片，可设置时间显示位置和大小</li>
                         <li>• <strong>点赞</strong>：使用本地点赞图标，显示点赞者头像，每行最多8个</li>
                         <li>• <strong>评论</strong>：支持多条评论，评论者名字后自动添加冒号，评论区有灰色背景</li>
+                        <li>• <strong>缩放系数</strong>：所有尺寸都基于图片宽度比例设置，支持自定义头像大小、字体大小、间距等</li>
                         <li>• <strong>样式</strong>：完全还原微信朋友圈的真实样式</li>
                     </ul>
                 </div>
@@ -580,7 +651,25 @@
                 likers: document.getElementById('likers').value.split(',').filter(name => name.trim()),
                 comments: JSON.parse(document.getElementById('comments').value || '[]'),
                 imageWidth: parseInt(document.getElementById('imageWidth').value) || 375,
-                imageHeight: parseInt(document.getElementById('imageHeight').value) || 812
+                imageHeight: parseInt(document.getElementById('imageHeight').value) || 812,
+                // 新增的缩放系数
+                avatarSizeRatio: parseFloat(document.getElementById('avatarSizeRatio').value) || 0.107,
+                publisherNameFontRatio: parseFloat(document.getElementById('publisherNameFontRatio').value) || 0.043,
+                contentFontRatio: parseFloat(document.getElementById('contentFontRatio').value) || 0.043,
+                timeFontRatio: parseFloat(document.getElementById('timeFontRatio').value) || 0.037,
+                commentNameFontRatio: parseFloat(document.getElementById('commentNameFontRatio').value) || 0.037,
+                commentContentFontRatio: parseFloat(document.getElementById('commentContentFontRatio').value) || 0.037,
+                likeIconSizeRatio: parseFloat(document.getElementById('likeIconSizeRatio').value) || 0.043,
+                likerAvatarSizeRatio: parseFloat(document.getElementById('likerAvatarSizeRatio').value) || 0.053,
+                contentImageSizeRatio: parseFloat(document.getElementById('contentImageSizeRatio').value) || 0.296,
+                leftMarginRatio: parseFloat(document.getElementById('leftMarginRatio').value) || 0.04,
+                rightMarginRatio: parseFloat(document.getElementById('rightMarginRatio').value) || 0.04,
+                avatarTextSpacingRatio: parseFloat(document.getElementById('avatarTextSpacingRatio').value) || 0.027,
+                contentLineSpacingRatio: parseFloat(document.getElementById('contentLineSpacingRatio').value) || 0.053,
+                imageSpacingRatio: parseFloat(document.getElementById('imageSpacingRatio').value) || 0.013,
+                likerSpacingRatio: parseFloat(document.getElementById('likerSpacingRatio').value) || 0.013,
+                commentLineSpacingRatio: parseFloat(document.getElementById('commentLineSpacingRatio').value) || 0.048,
+                commentSpacingRatio: parseFloat(document.getElementById('commentSpacingRatio').value) || 0.021
             };
         }
 
@@ -706,6 +795,33 @@
                         } else if (index === 'time_left_ratio' || index === 'time_right_ratio') {
                             // 特殊处理时间边距比例字段，将其转换为浮点数
                             currentConfig[index] = content ? (parseFloat(content) || 0.1) : 0.1;
+                        } else if (index === 'avatarSizeRatio' || index === 'publisherNameFontRatio' || index === 'contentFontRatio' || 
+                                   index === 'timeFontRatio' || index === 'commentNameFontRatio' || index === 'commentContentFontRatio' ||
+                                   index === 'likeIconSizeRatio' || index === 'likerAvatarSizeRatio' || index === 'contentImageSizeRatio' ||
+                                   index === 'leftMarginRatio' || index === 'rightMarginRatio' || index === 'avatarTextSpacingRatio' ||
+                                   index === 'contentLineSpacingRatio' || index === 'imageSpacingRatio' || index === 'likerSpacingRatio' ||
+                                   index === 'commentLineSpacingRatio' || index === 'commentSpacingRatio') {
+                            // 特殊处理缩放系数字段，将其转换为浮点数
+                            const defaultValue = {
+                                avatarSizeRatio: 0.107,
+                                publisherNameFontRatio: 0.043,
+                                contentFontRatio: 0.043,
+                                timeFontRatio: 0.037,
+                                commentNameFontRatio: 0.037,
+                                commentContentFontRatio: 0.037,
+                                likeIconSizeRatio: 0.043,
+                                likerAvatarSizeRatio: 0.053,
+                                contentImageSizeRatio: 0.296,
+                                leftMarginRatio: 0.04,
+                                rightMarginRatio: 0.04,
+                                avatarTextSpacingRatio: 0.027,
+                                contentLineSpacingRatio: 0.053,
+                                imageSpacingRatio: 0.013,
+                                likerSpacingRatio: 0.013,
+                                commentLineSpacingRatio: 0.048,
+                                commentSpacingRatio: 0.021
+                            };
+                            currentConfig[index] = content ? (parseFloat(content) || defaultValue[index]) : defaultValue[index];
                         } else {
                             currentConfig[index] = content || '';
                         }
@@ -802,11 +918,18 @@
 
         // 绘制朋友圈内容
         async function drawPyqContent(ctx, config, width, height, startY) {
-            let currentY = startY + 20; // 顶部间距
+            // 计算基于图片宽度的各种尺寸
+            const avatarSize = Math.round(width * (config.avatarSizeRatio || 0.107));
+            const leftMargin = Math.round(width * (config.leftMarginRatio || 0.04));
+            const rightMargin = Math.round(width * (config.rightMarginRatio || 0.04));
+            const avatarTextSpacing = Math.round(width * (config.avatarTextSpacingRatio || 0.027));
+            const contentLineSpacing = Math.round(width * (config.contentLineSpacingRatio || 0.053));
+            const imageSpacing = Math.round(width * (config.imageSpacingRatio || 0.013));
+            
+            let currentY = startY + Math.round(width * 0.053); // 顶部间距，使用宽度比例
             
             // 绘制发布者头像
-            const avatarSize = 40;
-            const avatarX = 15;
+            const avatarX = leftMargin;
             const avatarY = currentY;
             
             // 加载头像
@@ -828,21 +951,23 @@
             }
             
             // 绘制发布者姓名
+            const publisherNameFontSize = Math.round(width * (config.publisherNameFontRatio || 0.043));
             ctx.fillStyle = '#000000';
-            ctx.font = 'bold 16px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+            ctx.font = `bold ${publisherNameFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
             ctx.textAlign = 'left';
-            ctx.fillText(config.publisher_name || '飞书-Ben', avatarX + avatarSize + 10, avatarY + 16);
+            ctx.fillText(config.publisher_name || '飞书-Ben', avatarX + avatarSize + avatarTextSpacing, avatarY + Math.round(publisherNameFontSize * 0.8));
             
-            currentY += avatarSize + 10;
+            currentY += avatarSize + Math.round(width * 0.027);
             
             // 绘制内容文本 - 与发布者名字左对齐
             if (config.content) {
-                const textX = avatarX + avatarSize + 10; // 与发布者名字左对齐
-                const textWidth = width - textX - 15; // 减去右边距
-                const lineHeight = 20;
+                const textX = avatarX + avatarSize + avatarTextSpacing; // 与发布者名字左对齐
+                const textWidth = width - textX - rightMargin; // 减去右边距
+                const contentFontSize = Math.round(width * (config.contentFontRatio || 0.043));
+                const lineHeight = Math.round(contentFontSize * 1.25);
                 
                 ctx.fillStyle = '#000000';
-                ctx.font = '16px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                ctx.font = `${contentFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
                 ctx.textAlign = 'left';
                 
                 // 改进的文本换行算法
@@ -878,20 +1003,20 @@
                     currentY += lineHeight;
                 }
                 
-                currentY += 10;
+                currentY += Math.round(width * 0.027);
             }
             
             // 绘制多张配图
             if (config.content_images && config.content_images.length > 0) {
                 const maxImages = Math.min(config.content_images.length, 9);
-                const imageSize = (width - 30 - 20) / 3; // 减去左右边距和图片间距
+                const contentImageSize = Math.round(width * (config.contentImageSizeRatio || 0.296));
                 const imagesPerRow = 3;
                 
                 for (let i = 0; i < maxImages; i++) {
                     const row = Math.floor(i / imagesPerRow);
                     const col = i % imagesPerRow;
-                    const imageX = 15 + col * (imageSize + 5);
-                    const imageY = currentY + row * (imageSize + 5);
+                    const imageX = leftMargin + col * (contentImageSize + imageSpacing);
+                    const imageY = currentY + row * (contentImageSize + imageSpacing);
                     
                     try {
                         const contentImage = await loadContentImage(config.content_images[i]);
@@ -904,26 +1029,27 @@
                         ctx.drawImage(
                             contentImage,
                             sourceX, sourceY, minDimension, minDimension,
-                            imageX, imageY, imageSize, imageSize
+                            imageX, imageY, contentImageSize, contentImageSize
                         );
                     } catch (error) {
                         // 绘制图片占位符
                         ctx.fillStyle = '#e0e0e0';
-                        ctx.fillRect(imageX, imageY, imageSize, imageSize);
+                        ctx.fillRect(imageX, imageY, contentImageSize, contentImageSize);
                     }
                 }
                 
                 const rows = Math.ceil(maxImages / imagesPerRow);
-                currentY += rows * (imageSize + 5) + 10;
+                currentY += rows * (contentImageSize + imageSpacing) + Math.round(width * 0.027);
             }
             
             // 绘制时间 - 放在点赞、评论区的上方
             if (config.publish_time) {
+                const timeFontSize = Math.round(width * (config.timeFontRatio || 0.037));
                 ctx.fillStyle = '#8e8e93';
-                ctx.font = '14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                ctx.font = `${timeFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
                 ctx.textAlign = 'left';
-                ctx.fillText(config.publish_time, 15, currentY + 14);
-                currentY += 25;
+                ctx.fillText(config.publish_time, leftMargin, currentY + Math.round(timeFontSize * 0.8));
+                currentY += Math.round(timeFontSize * 1.8);
             }
             
             // 绘制点赞区域
@@ -939,9 +1065,10 @@
 
         // 绘制点赞区域
         async function drawLikes(ctx, config, width, startY) {
-            const likeIconSize = 16;
-            const likeIconX = 15;
-            const likeIconY = startY + 12; // 调整心形图标垂直位置
+            const leftMargin = Math.round(width * (config.leftMarginRatio || 0.04));
+            const likeIconSize = Math.round(width * (config.likeIconSizeRatio || 0.043));
+            const likeIconX = leftMargin;
+            const likeIconY = startY + Math.round(likeIconSize * 0.75); // 调整心形图标垂直位置
             
             // 绘制本地点赞图标
             try {
@@ -956,17 +1083,17 @@
             }
             
             // 绘制点赞者头像
-            const avatarSize = 20;
+            const likerAvatarSize = Math.round(width * (config.likerAvatarSizeRatio || 0.053));
             const maxAvatarsPerRow = 8;
-            const avatarSpacing = 5;
-            let currentX = likeIconX + likeIconSize + 10;
+            const likerSpacing = Math.round(width * (config.likerSpacingRatio || 0.013));
+            let currentX = likeIconX + likeIconSize + Math.round(width * 0.027);
             let currentY = startY;
             let avatarCount = 0;
             
             for (let i = 0; i < Math.min(config.like_count, config.likers ? config.likers.length : 0); i++) {
                 if (avatarCount >= maxAvatarsPerRow) {
-                    currentX = likeIconX + likeIconSize + 10;
-                    currentY += avatarSize + avatarSpacing;
+                    currentX = likeIconX + likeIconSize + Math.round(width * 0.027);
+                    currentY += likerAvatarSize + likerSpacing;
                     avatarCount = 0;
                 }
                 
@@ -984,30 +1111,37 @@
                     // 绘制圆形头像
                     ctx.save();
                     ctx.beginPath();
-                    ctx.arc(currentX + avatarSize/2, currentY + avatarSize/2, avatarSize/2, 0, 2 * Math.PI);
+                    ctx.arc(currentX + likerAvatarSize/2, currentY + likerAvatarSize/2, likerAvatarSize/2, 0, 2 * Math.PI);
                     ctx.clip();
-                    ctx.drawImage(likerAvatar, currentX, currentY, avatarSize, avatarSize);
+                    ctx.drawImage(likerAvatar, currentX, currentY, likerAvatarSize, likerAvatarSize);
                     ctx.restore();
                 } else {
                     // 绘制默认圆形头像
                     ctx.save();
                     ctx.beginPath();
-                    ctx.arc(currentX + avatarSize/2, currentY + avatarSize/2, avatarSize/2, 0, 2 * Math.PI);
+                    ctx.arc(currentX + likerAvatarSize/2, currentY + likerAvatarSize/2, likerAvatarSize/2, 0, 2 * Math.PI);
                     ctx.fillStyle = '#e0e0e0';
                     ctx.fill();
                     ctx.restore();
                 }
                 
-                currentX += avatarSize + avatarSpacing;
+                currentX += likerAvatarSize + likerSpacing;
                 avatarCount++;
             }
             
-            return currentY + avatarSize + 15; // 增加底部间距，避免与评论重叠
+            return currentY + likerAvatarSize + Math.round(width * 0.04); // 增加底部间距，避免与评论重叠
         }
 
         // 绘制评论区域
         function drawComments(ctx, config, width, startY) {
-            let currentY = startY + 5; // 增加顶部间距，避免与点赞区域重叠
+            const leftMargin = Math.round(width * (config.leftMarginRatio || 0.04));
+            const rightMargin = Math.round(width * (config.rightMarginRatio || 0.04));
+            const commentNameFontSize = Math.round(width * (config.commentNameFontRatio || 0.037));
+            const commentContentFontSize = Math.round(width * (config.commentContentFontRatio || 0.037));
+            const commentLineSpacing = Math.round(width * (config.commentLineSpacingRatio || 0.048));
+            const commentSpacing = Math.round(width * (config.commentSpacingRatio || 0.021));
+            
+            let currentY = startY + Math.round(width * 0.013); // 增加顶部间距，避免与点赞区域重叠
             
             // 确保comments是数组
             if (!Array.isArray(config.comments)) {
@@ -1017,7 +1151,7 @@
             
             // 绘制评论区灰色背景
             ctx.fillStyle = '#f8f8f8';
-            ctx.fillRect(15, currentY - 5, width - 30, 100); // 临时高度，后面会调整
+            ctx.fillRect(leftMargin, currentY - Math.round(width * 0.013), width - leftMargin - rightMargin, 100); // 临时高度，后面会调整
             
             for (let comment of config.comments) {
                 // 确保comment是对象且有content属性
@@ -1028,18 +1162,18 @@
                 
                 // 绘制评论者姓名（加上冒号）
                 ctx.fillStyle = '#007AFF';
-                ctx.font = 'bold 14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                ctx.font = `bold ${commentNameFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
                 ctx.textAlign = 'left';
-                ctx.fillText((comment.name || '用户') + '：', 15, currentY + 14);
+                ctx.fillText((comment.name || '用户') + '：', leftMargin, currentY + Math.round(commentNameFontSize * 0.8));
                 
                 // 计算评论者姓名的宽度，为评论内容留出空间
                 const nameWidth = ctx.measureText((comment.name || '用户') + '：').width;
-                const commentX = 15 + nameWidth + 8; // 姓名后留8px间距
-                const commentWidth = width - commentX - 15; // 减去右边距
-                const lineHeight = 18; // 调整行间距
+                const commentX = leftMargin + nameWidth + Math.round(width * 0.021); // 姓名后留间距
+                const commentWidth = width - commentX - rightMargin; // 减去右边距
+                const lineHeight = Math.round(commentContentFontSize * 1.3); // 调整行间距
                 
                 ctx.fillStyle = '#000000';
-                ctx.font = '14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                ctx.font = `${commentContentFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
                 
                 // 改进的文本换行算法
                 const words = comment.content.split('');
@@ -1073,18 +1207,18 @@
                     const line = lines[i];
                     if (i === 0) {
                         // 第一行与姓名同行
-                        ctx.fillText(line, commentX, currentY + 14);
+                        ctx.fillText(line, commentX, currentY + Math.round(commentContentFontSize * 0.8));
                     } else {
                         // 后续行缩进到与姓名对齐
-                        ctx.fillText(line, 15, currentY + 14);
+                        ctx.fillText(line, leftMargin, currentY + Math.round(commentContentFontSize * 0.8));
                     }
                     currentY += lineHeight;
                 }
                 
-                currentY += 8; // 评论间距
+                currentY += commentSpacing; // 评论间距
             }
             
-            return currentY + 10;
+            return currentY + Math.round(width * 0.027);
         }
 
         // 显示预览
