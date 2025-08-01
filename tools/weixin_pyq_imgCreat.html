@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>朋友圈图片生成器 - 君言工具站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neumorphic': {
+                            'light': '#f0f0f3',
+                            'dark': '#d1d9e6',
+                            'shadow': '#a3b1c6'
+                        }
+                    },
+                    boxShadow: {
+                        'neumorphic': '20px 20px 60px #bebebe, -20px -20px 60px #ffffff',
+                        'neumorphic-inset': 'inset 20px 20px 60px #bebebe, inset -20px -20px 60px #ffffff',
+                        'neumorphic-pressed': 'inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 拟物风背景渐变 */
+        .neumorphic-bg {
+            background: linear-gradient(145deg, #e6e6e6, #ffffff);
+        }
+        
+        /* 拟物风卡片 */
+        .neumorphic-card {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .neumorphic-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 25px 25px 75px #bebebe, -25px -25px 75px #ffffff;
+        }
+        
+        /* 拟物风按钮 */
+        .neumorphic-btn {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff;
+            transition: all 0.2s ease;
+        }
+        
+        .neumorphic-btn:hover {
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            transform: translateY(2px);
+        }
+        
+        .neumorphic-btn:active {
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            transform: translateY(4px);
+        }
+        
+        /* 拟物风输入框 */
+        .neumorphic-input {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .neumorphic-input:focus {
+            box-shadow: inset 8px 8px 16px #bebebe, inset -8px -8px 16px #ffffff;
+            outline: none;
+        }
+        
+        /* 自定义滚动条 */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(145deg, #d1d9e6, #a3b1c6);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(145deg, #a3b1c6, #8a9bb3);
+        }
+        
+        /* 文件上传区域 */
+        .upload-area {
+            border: 2px dashed #d1d9e6;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            border-color: #7d93f3;
+            background: rgba(125, 147, 243, 0.05);
+        }
+        
+        .upload-area.dragover {
+            border-color: #7d93f3;
+            background: rgba(125, 147, 243, 0.1);
+        }
+        
+        /* 预览区域 */
+        .preview-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #7d93f3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="neumorphic-bg min-h-screen">
+    <!-- 主内容区域 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- 功能说明 -->
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-4">
+                朋友圈图片生成器
+            </h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                生成逼真的朋友圈图片，支持文本、图片、点赞、评论等功能。可自定义配置或上传Excel批量生成。
+            </p>
+        </div>
+
+        <!-- 文件上传区域 -->
+        <div class="neumorphic-card rounded-3xl p-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                <!-- Excel文件上传 -->
+                <div class="flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">上传Excel文件（批量生成）</h3>
+                        <a href="/res/pyq/pyq_example.xlsx" download class="neumorphic-btn px-4 py-2 rounded-lg text-sm text-blue-600 hover:text-blue-700 transition-colors whitespace-nowrap">
+                            <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            下载示例Excel文件
+                        </a>
+                    </div>
+                    <div class="flex items-center space-x-4 flex-1">
+                        <div class="upload-area rounded-xl p-4 text-center flex-1 h-full" id="uploadArea">
+                            <div class="mb-2">
+                                <svg class="w-8 h-8 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium text-gray-700 mb-1">拖拽Excel文件到此处或点击选择</p>
+                            <p class="text-xs text-gray-500 mb-2">支持.xlsx和.xls格式</p>
+                            <input type="file" id="fileInput" accept=".xlsx,.xls" multiple class="hidden">
+                            <button onclick="document.getElementById('fileInput').click()" class="neumorphic-btn px-4 py-2 rounded-lg text-sm text-gray-700 hover:text-blue-600 transition-all">
+                                选择文件
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图片文件上传 -->
+                <div class="flex flex-col">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">上传图片文件（头像、配图）</h3>
+                    <div class="upload-area rounded-xl p-4 text-center flex-1 h-full" id="imageUploadArea">
+                        <div class="mb-2">
+                            <svg class="w-8 h-8 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-sm font-medium text-gray-700 mb-1">拖拽图片文件到此处或点击选择</p>
+                        <p class="text-xs text-gray-500 mb-2">支持jpg、png等格式，用于头像和配图</p>
+                        <input type="file" id="imageInput" accept="image/*" multiple class="hidden">
+                        <button onclick="document.getElementById('imageInput').click()" class="neumorphic-btn px-4 py-2 rounded-lg text-sm text-gray-700 hover:text-blue-600 transition-all">
+                            选择图片
+                        </button>
+                    </div>
+                    <div id="imagePreview" class="mt-2 grid grid-cols-3 gap-1 hidden">
+                        <!-- 图片预览将在这里显示 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 生成按钮 -->
+        <div class="text-center mb-8">
+            <button id="generateBtn" onclick="generateImages()" class="neumorphic-btn px-12 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all text-lg font-medium">
+                <span id="generateText">生成朋友圈图片</span>
+                <span id="generateLoading" class="loading hidden ml-2"></span>
+            </button>
+            <button id="previewBtn" onclick="previewSingle()" class="neumorphic-btn px-8 py-4 rounded-2xl bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 transition-all text-lg font-medium ml-4">
+                预览效果
+            </button>
+        </div>
+
+        <!-- 错误提示 -->
+        <div id="errorSection" class="hidden mb-8">
+            <div class="neumorphic-card rounded-3xl p-8 border-l-4 border-red-500">
+                <div class="flex items-center">
+                    <svg class="w-8 h-8 text-red-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">处理失败</h3>
+                        <p id="errorMessage" class="text-gray-600 mt-1"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 预览区域 -->
+        <div id="previewSection" class="hidden">
+            <div class="neumorphic-card rounded-3xl p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">预览结果</h3>
+                <div id="previewContainer" class="preview-container custom-scrollbar">
+                    <!-- 预览内容将在这里显示 -->
+                </div>
+                <div class="flex justify-center space-x-4 mt-6">
+                    <button onclick="downloadAll()" class="neumorphic-btn px-8 py-3 rounded-2xl bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 transition-all">
+                        下载全部
+                    </button>
+                    <button onclick="clearAll()" class="neumorphic-btn px-8 py-3 rounded-2xl text-gray-700 hover:text-red-600 transition-all">
+                        清空
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配置面板 -->
+        <div class="neumorphic-card rounded-3xl p-8 mb-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">朋友圈配置</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 基础信息 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">发布者姓名</label>
+                    <input type="text" id="publisherName" value="飞书-Ben" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="发布者姓名">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">发布时间</label>
+                    <input type="text" id="publishTime" value="昨天" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="发布时间">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">头像文件名</label>
+                    <input type="text" id="avatarFile" value="1.jpg" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="头像文件名">
+                </div>
+                
+                <!-- 内容配置 -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">发布内容</label>
+                    <textarea id="content" rows="4" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="输入朋友圈内容...">小小的milestone, Google给我开Adsense账号了,以后给Google打工。这个中间还有个小故事,也很好玩,分享一下。我有个有点流量的网站,想挂</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">配图文件名</label>
+                    <input type="text" id="contentImage" value="" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="配图文件名（可选）">
+                </div>
+                
+                <!-- 点赞配置 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞数量</label>
+                    <input type="number" id="likeCount" value="2" min="0" max="50" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="点赞数量">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞者姓名（逗号分隔）</label>
+                    <input type="text" id="likers" value="张三,李四" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="点赞者姓名，逗号分隔">
+                </div>
+                
+                <!-- 评论配置 -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评论（JSON格式）</label>
+                    <textarea id="comments" rows="3" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder='[{"name":"飞书-Ben","content":"真aha moment, 我就需要这样的agent"},{"name":"飞书-Ben","content":"有人问起来,顺便插播一个小广告,需要买 Claude code 的话,昨天写了手把手教程,无需梯子,支持微信支付: https://larkcommunity.feishu.c..."}]'>[{"name":"飞书-Ben","content":"真aha moment, 我就需要这样的agent"},{"name":"飞书-Ben","content":"有人问起来,顺便插播一个小广告,需要买 Claude code 的话,昨天写了手把手教程,无需梯子,支持微信支付: https://larkcommunity.feishu.c..."}]</textarea>
+                </div>
+                
+                <!-- 尺寸配置 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">图片宽度</label>
+                    <input type="number" id="imageWidth" value="375" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="375">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">图片高度</label>
+                    <input type="number" id="imageHeight" value="812" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="812">
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="neumorphic-card rounded-3xl p-8 mb-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">使用说明</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-3">Excel文件格式要求：</h4>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li>• 第一行为标题行，必须包含：index, type, content</li>
+                        <li>• 第2-8行为配置行，用于设置朋友圈参数</li>
+                        <li>• 第9行开始为朋友圈记录</li>
+                        <li>• 配置项包括：publisher_name, publish_time, avatar_file, content, content_image, like_count, likers, comments</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-3">功能说明：</h4>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li>• <strong>头像</strong>：优先使用上传的图片，否则从res/pyq文件夹随机选择</li>
+                        <li>• <strong>配图</strong>：支持单张图片，优先使用上传的图片</li>
+                        <li>• <strong>点赞</strong>：显示点赞者头像，每行最多8个</li>
+                        <li>• <strong>评论</strong>：支持多条评论，包含评论者姓名和内容</li>
+                        <li>• <strong>样式</strong>：完全还原微信朋友圈的真实样式</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 全局变量
+        let uploadedFiles = [];
+        let uploadedImages = [];
+        let generatedImages = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFileUpload();
+            setupImageUpload();
+        });
+
+        // 设置文件上传
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            // 拖拽上传
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = Array.from(e.dataTransfer.files);
+                handleFiles(files);
+            });
+
+            // 点击上传
+            fileInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                handleFiles(files);
+            });
+        }
+
+        // 设置图片上传
+        function setupImageUpload() {
+            const imageUploadArea = document.getElementById('imageUploadArea');
+            const imageInput = document.getElementById('imageInput');
+
+            // 拖拽上传
+            imageUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                imageUploadArea.classList.add('dragover');
+            });
+
+            imageUploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                imageUploadArea.classList.remove('dragover');
+            });
+
+            imageUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                imageUploadArea.classList.remove('dragover');
+                const files = Array.from(e.dataTransfer.files);
+                handleImageFiles(files);
+            });
+
+            // 点击上传
+            imageInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                handleImageFiles(files);
+            });
+        }
+
+        // 处理上传的文件
+        function handleFiles(files) {
+            const excelFiles = files.filter(file => 
+                file.name.endsWith('.xlsx') || file.name.endsWith('.xls')
+            );
+
+            if (excelFiles.length === 0) {
+                showError('请选择Excel文件（.xlsx或.xls格式）');
+                return;
+            }
+
+            uploadedFiles = excelFiles;
+            hideError();
+            updateUploadStatus();
+        }
+
+        // 处理上传的图片文件
+        function handleImageFiles(files) {
+            const imageFiles = files.filter(file => 
+                file.type.startsWith('image/')
+            );
+
+            if (imageFiles.length === 0) {
+                showError('请选择图片文件');
+                return;
+            }
+
+            uploadedImages = uploadedImages.concat(imageFiles);
+            hideError();
+            updateImageUploadStatus();
+        }
+
+        // 更新上传状态
+        function updateUploadStatus() {
+            const uploadArea = document.getElementById('uploadArea');
+            if (uploadedFiles.length > 0) {
+                uploadArea.innerHTML = `
+                    <div class="mb-2">
+                        <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-sm font-medium text-gray-700 mb-1">已选择 ${uploadedFiles.length} 个文件</p>
+                    <div class="space-y-1">
+                        ${uploadedFiles.map(file => `<p class="text-xs text-gray-500">${file.name}</p>`).join('')}
+                    </div>
+                    <button onclick="document.getElementById('fileInput').click()" class="neumorphic-btn px-4 py-2 rounded-lg text-sm text-gray-700 hover:text-blue-600 transition-all mt-2">
+                        重新选择
+                    </button>
+                `;
+            }
+        }
+
+        // 更新图片上传状态
+        function updateImageUploadStatus() {
+            const imageUploadArea = document.getElementById('imageUploadArea');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            if (uploadedImages.length > 0) {
+                imageUploadArea.innerHTML = `
+                    <div class="mb-2">
+                        <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-sm font-medium text-gray-700 mb-1">已选择 ${uploadedImages.length} 张图片</p>
+                    <button onclick="document.getElementById('imageInput').click()" class="neumorphic-btn px-4 py-2 rounded-lg text-sm text-gray-700 hover:text-blue-600 transition-all mt-2">
+                        添加更多图片
+                    </button>
+                `;
+                
+                // 显示图片预览
+                imagePreview.innerHTML = uploadedImages.map((file, index) => `
+                    <div class="relative">
+                        <img src="${URL.createObjectURL(file)}" alt="${file.name}" class="w-full h-16 object-cover rounded-lg">
+                        <button onclick="removeImage(${index})" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs hover:bg-red-600">
+                            ×
+                        </button>
+                    </div>
+                `).join('');
+                imagePreview.classList.remove('hidden');
+            }
+        }
+
+        // 移除图片
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            updateImageUploadStatus();
+        }
+
+        // 生成图片
+        async function generateImages() {
+            hideError();
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const generateText = document.getElementById('generateText');
+            const generateLoading = document.getElementById('generateLoading');
+            
+            generateBtn.disabled = true;
+            generateText.textContent = '生成中...';
+            generateLoading.classList.remove('hidden');
+
+            try {
+                generatedImages = [];
+                
+                if (uploadedFiles.length > 0) {
+                    // 批量生成
+                    for (let i = 0; i < uploadedFiles.length; i++) {
+                        const file = uploadedFiles[i];
+                        generateText.textContent = `处理文件 ${i + 1}/${uploadedFiles.length}...`;
+                        
+                        const images = await processExcelFile(file);
+                        generatedImages.push({
+                            fileName: file.name.replace(/\.(xlsx|xls)$/i, ''),
+                            images: images
+                        });
+                    }
+                } else {
+                    // 单次生成
+                    const config = getConfigFromForm();
+                    const image = await generatePyqImage(config);
+                    generatedImages.push({
+                        fileName: '朋友圈',
+                        images: [image]
+                    });
+                }
+
+                generateText.textContent = '生成完成！';
+                setTimeout(() => {
+                    generateText.textContent = '生成朋友圈图片';
+                }, 1000);
+                
+                showPreview();
+            } catch (error) {
+                console.error('生成图片失败:', error);
+                showError('生成图片失败: ' + error.message);
+            } finally {
+                generateBtn.disabled = false;
+                generateLoading.classList.add('hidden');
+            }
+        }
+
+        // 从表单获取配置
+        function getConfigFromForm() {
+            return {
+                publisherName: document.getElementById('publisherName').value || '飞书-Ben',
+                publishTime: document.getElementById('publishTime').value || '昨天',
+                avatarFile: document.getElementById('avatarFile').value || '1.jpg',
+                content: document.getElementById('content').value || '',
+                contentImage: document.getElementById('contentImage').value || '',
+                likeCount: parseInt(document.getElementById('likeCount').value) || 0,
+                likers: document.getElementById('likers').value.split(',').filter(name => name.trim()),
+                comments: JSON.parse(document.getElementById('comments').value || '[]'),
+                imageWidth: parseInt(document.getElementById('imageWidth').value) || 375,
+                imageHeight: parseInt(document.getElementById('imageHeight').value) || 812
+            };
+        }
+
+        // 处理Excel文件
+        async function processExcelFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                        // 解析Excel数据
+                        const configs = parseExcelData(jsonData);
+                        const images = [];
+                        
+                        for (let config of configs) {
+                            const image = generatePyqImage(config);
+                            images.push(image);
+                        }
+                        
+                        resolve(images);
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+
+                reader.onerror = function() {
+                    reject(new Error('文件读取失败'));
+                };
+
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // 解析Excel数据
+        function parseExcelData(jsonData) {
+            if (jsonData.length < 2) {
+                throw new Error('Excel文件格式不正确');
+            }
+
+            const headers = jsonData[0];
+            const data = jsonData.slice(1);
+            
+            // 查找必要的列
+            const indexCol = headers.findIndex(h => h === 'index');
+            const typeCol = headers.findIndex(h => h === 'type');
+            const contentCol = headers.findIndex(h => h === 'content');
+
+            if (indexCol === -1 || typeCol === -1 || contentCol === -1) {
+                throw new Error('Excel文件缺少必要的列：index, type, content');
+            }
+
+            // 提取配置
+            const configs = [];
+            let currentConfig = {};
+
+            for (let row of data) {
+                const index = row[indexCol];
+                const type = row[typeCol];
+                const content = row[contentCol];
+
+                if (index && content !== undefined) {
+                    if (['publisher_name', 'publish_time', 'avatar_file', 'content', 'content_image', 'like_count', 'likers', 'comments'].includes(index)) {
+                        currentConfig[index] = content;
+                    } else if (index === 'end') {
+                        // 结束标记，保存当前配置
+                        if (Object.keys(currentConfig).length > 0) {
+                            configs.push({...currentConfig});
+                            currentConfig = {};
+                        }
+                    }
+                }
+            }
+
+            // 添加最后一个配置
+            if (Object.keys(currentConfig).length > 0) {
+                configs.push(currentConfig);
+            }
+
+            if (configs.length === 0) {
+                throw new Error('Excel文件中没有找到有效的配置');
+            }
+
+            return configs;
+        }
+
+        // 生成朋友圈图片
+        async function generatePyqImage(config) {
+            // 创建Canvas
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 设置画布尺寸
+            canvas.width = config.imageWidth || 375;
+            canvas.height = config.imageHeight || 812;
+
+            // 绘制背景
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制状态栏
+            drawStatusBar(ctx, canvas.width);
+
+            // 绘制头部
+            drawHeader(ctx, canvas.width);
+
+            // 绘制朋友圈内容
+            await drawPyqContent(ctx, config, canvas.width, canvas.height);
+
+            // 转换为图片
+            const imageData = canvas.toDataURL('image/png');
+            return {
+                dataUrl: imageData,
+                width: canvas.width,
+                height: canvas.height
+            };
+        }
+
+        // 绘制状态栏
+        function drawStatusBar(ctx, width) {
+            const statusBarHeight = 44;
+            
+            // 绘制时间
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 16px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('7:01', width / 2, 28);
+            
+            // 绘制右侧状态图标
+            const rightX = width - 20;
+            ctx.fillStyle = '#000000';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText('100', rightX, 28);
+        }
+
+        // 绘制头部
+        function drawHeader(ctx, width) {
+            const headerHeight = 44;
+            const startY = 44;
+            
+            // 绘制背景
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, startY, width, headerHeight);
+            
+            // 绘制返回箭头
+            ctx.fillStyle = '#007AFF';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('‹', 15, startY + 28);
+            
+            // 绘制标题
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 17px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('朋友圈', width / 2, startY + 28);
+            
+            // 绘制相机图标
+            ctx.fillStyle = '#007AFF';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText('📷', width - 15, startY + 28);
+        }
+
+        // 绘制朋友圈内容
+        async function drawPyqContent(ctx, config, width, height) {
+            let currentY = 88; // 状态栏 + 头部高度
+            
+            // 绘制发布者头像
+            const avatarSize = 40;
+            const avatarX = 15;
+            const avatarY = currentY;
+            
+            // 加载头像
+            let avatarImage = null;
+            try {
+                avatarImage = await loadAvatarImage(config.avatarFile);
+            } catch (error) {
+                console.log('头像加载失败，使用默认头像');
+            }
+            
+            if (avatarImage) {
+                ctx.drawImage(avatarImage, avatarX, avatarY, avatarSize, avatarSize);
+            } else {
+                // 绘制默认头像
+                ctx.fillStyle = '#e0e0e0';
+                ctx.fillRect(avatarX, avatarY, avatarSize, avatarSize);
+            }
+            
+            // 绘制发布者姓名
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 16px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(config.publisherName || '飞书-Ben', avatarX + avatarSize + 10, avatarY + 16);
+            
+            // 绘制发布时间
+            ctx.fillStyle = '#8e8e93';
+            ctx.font = '14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+            ctx.fillText(config.publishTime || '昨天', avatarX + avatarSize + 10, avatarY + 32);
+            
+            currentY += avatarSize + 10;
+            
+            // 绘制内容文本
+            if (config.content) {
+                const textX = 15;
+                const textWidth = width - 30;
+                const lineHeight = 20;
+                
+                ctx.fillStyle = '#000000';
+                ctx.font = '16px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                ctx.textAlign = 'left';
+                
+                // 改进的文本换行算法
+                const words = config.content.split('');
+                const lines = [];
+                let currentLine = '';
+                
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i];
+                    const testLine = currentLine + word;
+                    const metrics = ctx.measureText(testLine);
+                    
+                    if (metrics.width > textWidth) {
+                        if (currentLine === '') {
+                            // 单个字符就超宽，强制换行
+                            lines.push(word);
+                        } else {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        }
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                
+                if (currentLine) {
+                    lines.push(currentLine);
+                }
+                
+                // 绘制每一行
+                for (let line of lines) {
+                    ctx.fillText(line, textX, currentY);
+                    currentY += lineHeight;
+                }
+                
+                currentY += 10;
+            }
+            
+            // 绘制配图
+            if (config.contentImage) {
+                const imageX = 15;
+                const imageY = currentY;
+                const imageWidth = 200;
+                const imageHeight = 150;
+                
+                // 加载配图
+                let contentImage = null;
+                try {
+                    contentImage = await loadContentImage(config.contentImage);
+                } catch (error) {
+                    console.log('配图加载失败');
+                }
+                
+                if (contentImage) {
+                    ctx.drawImage(contentImage, imageX, imageY, imageWidth, imageHeight);
+                } else {
+                    // 绘制图片占位符
+                    ctx.fillStyle = '#e0e0e0';
+                    ctx.fillRect(imageX, imageY, imageWidth, imageHeight);
+                }
+                
+                currentY += imageHeight + 10;
+            }
+            
+            // 绘制点赞区域
+            if (config.likeCount > 0) {
+                currentY = drawLikes(ctx, config, width, currentY);
+            }
+            
+            // 绘制评论区域
+            if (config.comments && config.comments.length > 0) {
+                currentY = drawComments(ctx, config, width, currentY);
+            }
+        }
+
+        // 绘制点赞区域
+        function drawLikes(ctx, config, width, startY) {
+            const likeIconSize = 16;
+            const likeIconX = 15;
+            const likeIconY = startY + 12; // 调整心形图标垂直位置
+            
+            // 绘制心形图标
+            ctx.fillStyle = '#ff3b30';
+            ctx.font = `${likeIconSize}px Arial`;
+            ctx.textAlign = 'left';
+            ctx.fillText('❤️', likeIconX, likeIconY);
+            
+            // 绘制点赞者头像
+            const avatarSize = 20;
+            const maxAvatarsPerRow = 8;
+            const avatarSpacing = 5;
+            let currentX = likeIconX + likeIconSize + 10;
+            let currentY = startY;
+            let avatarCount = 0;
+            
+            for (let i = 0; i < Math.min(config.likeCount, config.likers.length); i++) {
+                if (avatarCount >= maxAvatarsPerRow) {
+                    currentX = likeIconX + likeIconSize + 10;
+                    currentY += avatarSize + avatarSpacing;
+                    avatarCount = 0;
+                }
+                
+                // 绘制点赞者头像（简化版）
+                ctx.fillStyle = '#e0e0e0';
+                ctx.fillRect(currentX, currentY, avatarSize, avatarSize);
+                
+                // 绘制点赞者姓名
+                ctx.fillStyle = '#007AFF';
+                ctx.font = '14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(config.likers[i] || `用户${i+1}`, currentX + avatarSize + 5, currentY + 14);
+                
+                currentX += avatarSize + 50; // 为文字留出空间
+                avatarCount++;
+            }
+            
+            return currentY + avatarSize + 15; // 增加底部间距，避免与评论重叠
+        }
+
+        // 绘制评论区域
+        function drawComments(ctx, config, width, startY) {
+            let currentY = startY + 5; // 增加顶部间距，避免与点赞区域重叠
+            
+            for (let comment of config.comments) {
+                // 绘制评论者姓名
+                ctx.fillStyle = '#007AFF';
+                ctx.font = 'bold 14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(comment.name || '用户', 15, currentY + 14);
+                
+                // 绘制评论内容
+                const commentX = 15;
+                const commentWidth = width - 30;
+                const lineHeight = 20; // 增加行间距，避免文字重叠
+                
+                ctx.fillStyle = '#000000';
+                ctx.font = '14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                
+                // 改进的文本换行算法
+                const words = comment.content.split('');
+                const lines = [];
+                let currentLine = '';
+                
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i];
+                    const testLine = currentLine + word;
+                    const metrics = ctx.measureText(testLine);
+                    
+                    if (metrics.width > commentWidth) {
+                        if (currentLine === '') {
+                            // 单个字符就超宽，强制换行
+                            lines.push(word);
+                        } else {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        }
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                
+                if (currentLine) {
+                    lines.push(currentLine);
+                }
+                
+                // 绘制每一行
+                for (let line of lines) {
+                    ctx.fillText(line, commentX, currentY + 14);
+                    currentY += lineHeight;
+                }
+                
+                currentY += 5;
+            }
+            
+            return currentY + 10;
+        }
+
+        // 显示预览
+        function showPreview() {
+            const previewSection = document.getElementById('previewSection');
+            const previewContainer = document.getElementById('previewContainer');
+            
+            previewContainer.innerHTML = '';
+
+            generatedImages.forEach((fileData, fileIndex) => {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'mb-8 p-6 neumorphic-card rounded-2xl';
+                fileDiv.innerHTML = `
+                    <h4 class="text-lg font-bold text-gray-900 mb-4">${fileData.fileName}</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${fileData.images.map((image, imageIndex) => `
+                            <div class="neumorphic-card rounded-xl p-4">
+                                <img src="${image.dataUrl}" alt="朋友圈图片" class="w-full h-auto rounded-lg mb-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">${image.width} × ${image.height}</span>
+                                    <button onclick="downloadImage('${image.dataUrl}', '${fileData.fileName}_${imageIndex + 1}.png')" 
+                                            class="neumorphic-btn px-4 py-2 rounded-lg text-sm text-blue-600 hover:text-blue-700 transition-colors">
+                                        下载
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                previewContainer.appendChild(fileDiv);
+            });
+
+            previewSection.classList.remove('hidden');
+        }
+
+        // 下载单个图片
+        function downloadImage(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 下载全部图片
+        function downloadAll() {
+            generatedImages.forEach((fileData, fileIndex) => {
+                fileData.images.forEach((image, imageIndex) => {
+                    setTimeout(() => {
+                        downloadImage(image.dataUrl, `${fileData.fileName}_${imageIndex + 1}.png`);
+                    }, fileIndex * 100 + imageIndex * 50);
+                });
+            });
+        }
+
+        // 显示错误
+        function showError(message) {
+            const errorSection = document.getElementById('errorSection');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorSection.classList.remove('hidden');
+            
+            // 自动隐藏错误提示
+            setTimeout(() => {
+                errorSection.classList.add('hidden');
+            }, 5000);
+        }
+
+        // 隐藏错误
+        function hideError() {
+            document.getElementById('errorSection').classList.add('hidden');
+        }
+
+        // 从文件加载图片
+        function loadImageFromFile(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => reject(new Error('图片加载失败'));
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        // 从服务器加载图片
+        function loadImageFromServer(imageName, type = 'pyq') {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => resolve(img);
+                img.onerror = () => reject(new Error(`图片加载失败: ${imageName}`));
+                img.src = `../res/${type}/${imageName}`;
+            });
+        }
+
+        // 加载头像图片
+        async function loadAvatarImage(imageName) {
+            // 优先从上传的图片中查找
+            let imageFile = null;
+            if (uploadedImages.length > 0) {
+                imageFile = uploadedImages.find(img => 
+                    img.name.toLowerCase() === imageName.toLowerCase() ||
+                    img.name.toLowerCase().includes(imageName.toLowerCase()) ||
+                    imageName.toLowerCase().includes(img.name.toLowerCase().replace(/\.[^/.]+$/, ''))
+                );
+            }
+            
+            if (imageFile) {
+                return await loadImageFromFile(imageFile);
+            } else {
+                // 从服务器加载，如果失败则随机选择
+                try {
+                    return await loadImageFromServer(imageName, 'pyq');
+                } catch (error) {
+                    // 随机选择头像
+                    const randomIndex = Math.floor(Math.random() * 2) + 1;
+                    return await loadImageFromServer(`${randomIndex}.jpg`, 'pyq');
+                }
+            }
+        }
+
+        // 加载配图
+        async function loadContentImage(imageName) {
+            // 优先从上传的图片中查找
+            let imageFile = null;
+            if (uploadedImages.length > 0) {
+                imageFile = uploadedImages.find(img => 
+                    img.name.toLowerCase() === imageName.toLowerCase() ||
+                    img.name.toLowerCase().includes(imageName.toLowerCase()) ||
+                    imageName.toLowerCase().includes(img.name.toLowerCase().replace(/\.[^/.]+$/, ''))
+                );
+            }
+            
+            if (imageFile) {
+                return await loadImageFromFile(imageFile);
+            } else {
+                // 从服务器加载
+                return await loadImageFromServer(imageName, 'pyq');
+            }
+        }
+
+        // 预览单个效果
+        async function previewSingle() {
+            hideError();
+            
+            const previewBtn = document.getElementById('previewBtn');
+            previewBtn.disabled = true;
+            previewBtn.textContent = '预览中...';
+
+            try {
+                const config = getConfigFromForm();
+                const image = await generatePyqImage(config);
+                
+                // 显示预览
+                const previewSection = document.getElementById('previewSection');
+                const previewContainer = document.getElementById('previewContainer');
+                
+                previewContainer.innerHTML = `
+                    <div class="mb-8 p-6 neumorphic-card rounded-2xl">
+                        <h4 class="text-lg font-bold text-gray-900 mb-4">预览效果</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="neumorphic-card rounded-xl p-4">
+                                <img src="${image.dataUrl}" alt="朋友圈预览" class="w-full h-auto rounded-lg mb-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">${image.width} × ${image.height}</span>
+                                    <button onclick="downloadImage('${image.dataUrl}', '朋友圈预览.png')" 
+                                            class="neumorphic-btn px-4 py-2 rounded-lg text-sm text-blue-600 hover:text-blue-700 transition-colors">
+                                        下载
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                previewSection.classList.remove('hidden');
+            } catch (error) {
+                console.error('预览失败:', error);
+                showError('预览失败: ' + error.message);
+            } finally {
+                previewBtn.disabled = false;
+                previewBtn.textContent = '预览效果';
+            }
+        }
+
+        // 清空所有
+        function clearAll() {
+            uploadedFiles = [];
+            uploadedImages = [];
+            generatedImages = [];
+            document.getElementById('previewSection').classList.add('hidden');
+            document.getElementById('imagePreview').classList.add('hidden');
+            hideError();
+            updateUploadStatus();
+            updateImageUploadStatus();
+        }
+    </script>
+</body>
+</html>

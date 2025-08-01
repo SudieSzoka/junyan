@@ -16,5 +16,14 @@
       "category": ["image", "mulit"],
       "icon": "weixin_chat_imgCreat",
       "show": true
+    },
+    {
+      "id": 3,
+      "name": "朋友圈图片生成器",
+      "description": "生成逼真的朋友圈图片，支持文本、图片、点赞、评论等功能，可批量生成",
+      "path": "tools/weixin_pyq_imgCreat.html",
+      "category": ["image", "mulit"],
+      "icon": "weixin_pyq_imgCreat",
+      "show": true
     }
   ]

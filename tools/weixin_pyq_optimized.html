@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>朋友圈图片生成器 - 优化版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .neumorphic-card {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .neumorphic-btn {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .neumorphic-btn:hover {
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            transform: translateY(2px);
+        }
+        .neumorphic-input {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            width: 100%;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-8">朋友圈图片生成器 - 优化版</h1>
+        
+        <!-- 配置面板 -->
+        <div class="neumorphic-card">
+            <h2 class="text-xl font-bold mb-4">配置</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label>发布者姓名:</label>
+                    <input type="text" id="publisherName" value="飞书-Ben" class="neumorphic-input">
+                </div>
+                <div>
+                    <label>发布时间:</label>
+                    <input type="text" id="publishTime" value="昨天" class="neumorphic-input">
+                </div>
+                <div>
+                    <label>头像文件名:</label>
+                    <input type="text" id="avatarFile" value="1.jpg" class="neumorphic-input">
+                </div>
+                <div>
+                    <label>顶部图片文件名:</label>
+                    <input type="text" id="topImageFile" value="" class="neumorphic-input" placeholder="可选">
+                </div>
+                <div class="md:col-span-2">
+                    <label>发布内容:</label>
+                    <textarea id="content" rows="3" class="neumorphic-input">小小的milestone, Google给我开Adsense账号了,以后给Google打工。</textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label>配图文件名（逗号分隔，最多9张）:</label>
+                    <input type="text" id="contentImages" value="1.png,2.png" class="neumorphic-input">
+                </div>
+                <div>
+                    <label>点赞数量:</label>
+                    <input type="number" id="likeCount" value="2" class="neumorphic-input">
+                </div>
+                <div>
+                    <label>点赞者头像:</label>
+                    <input type="text" id="likers" value="1.jpg,2.jpg" class="neumorphic-input">
+                </div>
+                <div class="md:col-span-2">
+                    <label>评论（JSON格式）:</label>
+                    <textarea id="comments" rows="3" class="neumorphic-input">[{"name":"飞书-Ben","content":"真aha moment, 我就需要这样的agent"},{"name":"用户","content":"很棒的分享！"}]</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- 生成按钮 -->
+        <div class="text-center">
+            <button onclick="generateImage()" class="neumorphic-btn bg-blue-500 text-white px-8 py-3 text-lg">
+                生成图片
+            </button>
+        </div>
+
+        <!-- 预览区域 -->
+        <div id="previewSection" class="neumorphic-card hidden">
+            <h2 class="text-xl font-bold mb-4">预览结果</h2>
+            <div id="previewContainer" class="text-center">
+                <!-- 预览内容将在这里显示 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 生成图片
+        async function generateImage() {
+            const config = getConfigFromForm();
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = 375;
+            canvas.height = 812;
+
+            // 绘制背景
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let currentY = 0;
+
+            // 绘制顶部图片（如果有）
+            if (config.top_image_file) {
+                try {
+                    const topImage = await loadImage(config.top_image_file);
+                    const topImageWidth = canvas.width;
+                    const topImageHeight = (topImage.height / topImage.width) * topImageWidth;
+                    
+                    ctx.drawImage(topImage, 0, 0, topImageWidth, topImageHeight);
+                    
+                    // 在顶部图片上绘制时间
+                    const timeText = new Date().toLocaleTimeString('zh-CN', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                    ctx.shadowBlur = 2;
+                    ctx.fillText(timeText, canvas.width / 2, topImageHeight * 0.15);
+                    ctx.shadowBlur = 0;
+                    
+                    currentY = topImageHeight;
+                } catch (error) {
+                    console.log('顶部图片加载失败');
+                }
+            }
+
+            // 绘制朋友圈内容
+            await drawPyqContent(ctx, config, canvas.width, canvas.height, currentY);
+
+            // 显示预览
+            const imageData = canvas.toDataURL('image/png');
+            showPreview(imageData);
+        }
+
+        // 从表单获取配置
+        function getConfigFromForm() {
+            return {
+                publisher_name: document.getElementById('publisherName').value,
+                publish_time: document.getElementById('publishTime').value,
+                avatar_file: document.getElementById('avatarFile').value,
+                content: document.getElementById('content').value,
+                content_images: document.getElementById('contentImages').value.split(',').filter(name => name.trim()),
+                top_image_file: document.getElementById('topImageFile').value,
+                like_count: parseInt(document.getElementById('likeCount').value) || 0,
+                likers: document.getElementById('likers').value.split(',').filter(name => name.trim()),
+                comments: JSON.parse(document.getElementById('comments').value || '[]')
+            };
+        }
+
+        // 绘制朋友圈内容
+        async function drawPyqContent(ctx, config, width, height, startY) {
+            let currentY = startY + 20;
+            
+            // 绘制发布者头像
+            const avatarSize = 40;
+            const avatarX = 15;
+            const avatarY = currentY;
+            
+            try {
+                const avatarImage = await loadImage(config.avatar_file);
+                ctx.drawImage(avatarImage, avatarX, avatarY, avatarSize, avatarSize);
+            } catch (error) {
+                ctx.fillStyle = '#e0e0e0';
+                ctx.fillRect(avatarX, avatarY, avatarSize, avatarSize);
+            }
+            
+            // 绘制发布者姓名
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(config.publisher_name, avatarX + avatarSize + 10, avatarY + 16);
+            
+            currentY += avatarSize + 10;
+            
+            // 绘制内容文本
+            if (config.content) {
+                const textX = avatarX + avatarSize + 10;
+                const textWidth = width - textX - 15;
+                const lineHeight = 20;
+                
+                ctx.fillStyle = '#000000';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'left';
+                
+                const words = config.content.split('');
+                const lines = [];
+                let currentLine = '';
+                
+                for (let word of words) {
+                    const testLine = currentLine + word;
+                    const metrics = ctx.measureText(testLine);
+                    
+                    if (metrics.width > textWidth) {
+                        if (currentLine === '') {
+                            lines.push(word);
+                        } else {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        }
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                
+                if (currentLine) {
+                    lines.push(currentLine);
+                }
+                
+                for (let line of lines) {
+                    ctx.fillText(line, textX, currentY);
+                    currentY += lineHeight;
+                }
+                
+                currentY += 10;
+            }
+            
+            // 绘制多张配图
+            if (config.content_images && config.content_images.length > 0) {
+                const maxImages = Math.min(config.content_images.length, 9);
+                const imageSize = (width - 30 - 20) / 3;
+                const imagesPerRow = 3;
+                
+                for (let i = 0; i < maxImages; i++) {
+                    const row = Math.floor(i / imagesPerRow);
+                    const col = i % imagesPerRow;
+                    const imageX = 15 + col * (imageSize + 5);
+                    const imageY = currentY + row * (imageSize + 5);
+                    
+                    try {
+                        const contentImage = await loadImage(config.content_images[i]);
+                        
+                        // 计算裁剪区域，保持正方形
+                        const minDimension = Math.min(contentImage.width, contentImage.height);
+                        const sourceX = (contentImage.width - minDimension) / 2;
+                        const sourceY = (contentImage.height - minDimension) / 2;
+                        
+                        ctx.drawImage(
+                            contentImage,
+                            sourceX, sourceY, minDimension, minDimension,
+                            imageX, imageY, imageSize, imageSize
+                        );
+                    } catch (error) {
+                        ctx.fillStyle = '#e0e0e0';
+                        ctx.fillRect(imageX, imageY, imageSize, imageSize);
+                    }
+                }
+                
+                const rows = Math.ceil(maxImages / imagesPerRow);
+                currentY += rows * (imageSize + 5) + 10;
+            }
+            
+            // 绘制时间
+            if (config.publish_time) {
+                ctx.fillStyle = '#8e8e93';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(config.publish_time, 15, currentY + 14);
+                currentY += 25;
+            }
+            
+            // 绘制点赞区域
+            if (config.like_count && config.like_count > 0) {
+                currentY = await drawLikes(ctx, config, width, currentY);
+            }
+            
+            // 绘制评论区域
+            if (config.comments && config.comments.length > 0) {
+                currentY = drawComments(ctx, config, width, currentY);
+            }
+        }
+
+        // 绘制点赞区域
+        async function drawLikes(ctx, config, width, startY) {
+            const likeIconSize = 16;
+            const likeIconX = 15;
+            const likeIconY = startY + 12;
+            
+            // 绘制点赞图标
+            ctx.fillStyle = '#ff3b30';
+            ctx.font = `${likeIconSize}px Arial`;
+            ctx.textAlign = 'left';
+            ctx.fillText('❤️', likeIconX, likeIconY);
+            
+            // 绘制点赞者头像
+            const avatarSize = 20;
+            const maxAvatarsPerRow = 8;
+            const avatarSpacing = 5;
+            let currentX = likeIconX + likeIconSize + 10;
+            let currentY = startY;
+            let avatarCount = 0;
+            
+            for (let i = 0; i < Math.min(config.like_count, config.likers ? config.likers.length : 0); i++) {
+                if (avatarCount >= maxAvatarsPerRow) {
+                    currentX = likeIconX + likeIconSize + 10;
+                    currentY += avatarSize + avatarSpacing;
+                    avatarCount = 0;
+                }
+                
+                try {
+                    const likerAvatar = await loadImage(config.likers[i]);
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(currentX + avatarSize/2, currentY + avatarSize/2, avatarSize/2, 0, 2 * Math.PI);
+                    ctx.clip();
+                    ctx.drawImage(likerAvatar, currentX, currentY, avatarSize, avatarSize);
+                    ctx.restore();
+                } catch (error) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(currentX + avatarSize/2, currentY + avatarSize/2, avatarSize/2, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#e0e0e0';
+                    ctx.fill();
+                    ctx.restore();
+                }
+                
+                currentX += avatarSize + avatarSpacing;
+                avatarCount++;
+            }
+            
+            return currentY + avatarSize + 15;
+        }
+
+        // 绘制评论区域
+        function drawComments(ctx, config, width, startY) {
+            let currentY = startY + 5;
+            
+            if (!Array.isArray(config.comments)) {
+                return currentY;
+            }
+            
+            // 绘制评论区灰色背景
+            ctx.fillStyle = '#f8f8f8';
+            ctx.fillRect(15, currentY - 5, width - 30, 100);
+            
+            for (let comment of config.comments) {
+                if (!comment || typeof comment !== 'object' || !comment.content) {
+                    continue;
+                }
+                
+                // 绘制评论者姓名（加上冒号）
+                ctx.fillStyle = '#007AFF';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText((comment.name || '用户') + '：', 15, currentY + 14);
+                
+                const nameWidth = ctx.measureText((comment.name || '用户') + '：').width;
+                const commentX = 15 + nameWidth + 8;
+                const commentWidth = width - commentX - 15;
+                const lineHeight = 18;
+                
+                ctx.fillStyle = '#000000';
+                ctx.font = '14px Arial';
+                
+                const words = comment.content.split('');
+                const lines = [];
+                let currentLine = '';
+                
+                for (let word of words) {
+                    const testLine = currentLine + word;
+                    const metrics = ctx.measureText(testLine);
+                    
+                    if (metrics.width > commentWidth) {
+                        if (currentLine === '') {
+                            lines.push(word);
+                        } else {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        }
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                
+                if (currentLine) {
+                    lines.push(currentLine);
+                }
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (i === 0) {
+                        ctx.fillText(line, commentX, currentY + 14);
+                    } else {
+                        ctx.fillText(line, 15, currentY + 14);
+                    }
+                    currentY += lineHeight;
+                }
+                
+                currentY += 8;
+            }
+            
+            return currentY + 10;
+        }
+
+        // 显示预览
+        function showPreview(imageData) {
+            const previewSection = document.getElementById('previewSection');
+            const previewContainer = document.getElementById('previewContainer');
+            
+            previewContainer.innerHTML = `
+                <img src="${imageData}" alt="朋友圈图片" class="max-w-full h-auto rounded-lg mb-4">
+                <button onclick="downloadImage('${imageData}', '朋友圈图片.png')" class="neumorphic-btn bg-green-500 text-white">
+                    下载图片
+                </button>
+            `;
+            
+            previewSection.classList.remove('hidden');
+        }
+
+        // 下载图片
+        function downloadImage(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 加载图片
+        function loadImage(imageName) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => resolve(img);
+                img.onerror = () => reject(new Error(`图片加载失败: ${imageName}`));
+                img.src = `../res/pyq/${imageName}`;
+            });
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,16 @@
+# 这是一个示例Excel文件的占位符
+# 实际使用时需要替换为真实的Excel文件，包含以下列：
+# index, content
+# publisher_name, 飞书-Ben
+# publish_time, 昨天
+# avatar_file, 1.jpg
+# content, 小小的milestone, Google给我开Adsense账号了,以后给Google打工。
+# content_images, ["1.png","2.png","3.png"]
+# top_image_file, 
+# time_font_size, 16
+# time_left_ratio, 0.1
+# time_right_ratio, 0.1
+# like_count, 2
+# likers, ["1.jpg","2.jpg"]
+# comments, [{"name":"飞书-Ben","content":"真aha moment, 我就需要这样的agent"},{"name":"用户","content":"很棒的分享！"}]
+# end, 
