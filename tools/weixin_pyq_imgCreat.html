@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <link rel="stylesheet" href="styles/common.css">
+  <link rel="stylesheet" href="themes/default.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>朋友圈图片生成器 - 君言工具站</title>
@@ -130,6 +132,47 @@
     </style>
 </head>
 <body class="neumorphic-bg min-h-screen">
+<!-- COMMON_HEADER -->
+<!-- 固定页头 -->
+<header class="neumorphic-header sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+            <!-- Logo -->
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <a href="../index.html" class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all">
+                        君言工具站
+                    </a>
+                </div>
+            </div>
+
+            <!-- 导航菜单 -->
+            <nav class="hidden md:block">
+                <div class="flex items-center space-x-4">
+                    <a href="../index.html" class="neumorphic-btn px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 transition-all font-medium">首页</a>
+                </div>
+            </nav>
+
+            <!-- 移动端菜单按钮 -->
+            <div class="md:hidden">
+                <button class="neumorphic-btn p-3 rounded-xl text-gray-700 hover:text-blue-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+/* 拟物风头部 */
+.neumorphic-header {
+    background: linear-gradient(145deg, #ffffff, #f0f0f3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+</style>
+<!-- END_COMMON_HEADER -->
     <!-- 主内容区域 -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- 功能说明 -->
@@ -149,7 +192,7 @@
                 <div class="flex flex-col">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-bold text-gray-900">上传Excel文件（批量生成）</h3>
-                        <a href="/res/pyq/pyq_example.xlsx" download class="neumorphic-btn px-4 py-2 rounded-lg text-sm text-blue-600 hover:text-blue-700 transition-colors whitespace-nowrap">
+                        <a href="/res/pyq/pyq_example_optimized.xlsx" download class="neumorphic-btn px-4 py-2 rounded-lg text-sm text-blue-600 hover:text-blue-700 transition-colors whitespace-nowrap">
                             <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
@@ -264,8 +307,24 @@
                     <textarea id="content" rows="4" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="输入朋友圈内容...">小小的milestone, Google给我开Adsense账号了,以后给Google打工。这个中间还有个小故事,也很好玩,分享一下。我有个有点流量的网站,想挂</textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">配图文件名</label>
-                    <input type="text" id="contentImage" value="" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="配图文件名（可选）">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">配图文件名（逗号分隔，最多9张）</label>
+                    <input type="text" id="contentImages" value="" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="1.png,2.png,3.png">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">顶部图片文件名</label>
+                    <input type="text" id="topImageFile" value="top.jpg" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="顶部图片文件名（可选）">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">时间字体大小</label>
+                    <input type="number" id="timeFontSize" value="16" min="12" max="24" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">时间左边距比例</label>
+                    <input type="number" id="timeLeftRatio" value="0.1" min="0" max="1" step="0.1" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">时间右边距比例</label>
+                    <input type="number" id="timeRightRatio" value="0.1" min="0" max="1" step="0.1" class="neumorphic-input w-full px-4 py-2 rounded-xl">
                 </div>
                 
                 <!-- 点赞配置 -->
@@ -274,8 +333,8 @@
                     <input type="number" id="likeCount" value="2" min="0" max="50" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="点赞数量">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞者姓名（逗号分隔）</label>
-                    <input type="text" id="likers" value="张三,李四" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="点赞者姓名，逗号分隔">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞者头像文件名（逗号分隔）</label>
+                    <input type="text" id="likers" value="1.jpg,2.jpg" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="点赞者头像文件名，逗号分隔">
                 </div>
                 
                 <!-- 评论配置 -->
@@ -287,11 +346,81 @@
                 <!-- 尺寸配置 -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">图片宽度</label>
-                    <input type="number" id="imageWidth" value="375" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="375">
+                    <input type="number" id="imageWidth" value="1080" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="375">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">图片高度</label>
-                    <input type="number" id="imageHeight" value="812" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="812">
+                    <input type="number" id="imageHeight" value="2400" class="neumorphic-input w-full px-4 py-2 rounded-xl" placeholder="812">
+                </div>
+                
+                <!-- 缩放系数配置 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">头像大小系数（图片宽度比例）</label>
+                    <input type="number" id="avatarSizeRatio" value="0.107" min="0.05" max="0.2" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">发布者姓名字体系数</label>
+                    <input type="number" id="publisherNameFontRatio" value="0.043" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">内容文字字体系数</label>
+                    <input type="number" id="contentFontRatio" value="0.043" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">时间文字字体系数</label>
+                    <input type="number" id="timeFontRatio" value="0.037" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评论者姓名字体系数</label>
+                    <input type="number" id="commentNameFontRatio" value="0.037" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评论内容字体系数</label>
+                    <input type="number" id="commentContentFontRatio" value="0.037" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞图标大小系数</label>
+                    <input type="number" id="likeIconSizeRatio" value="0.043" min="0.02" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞者头像大小系数</label>
+                    <input type="number" id="likerAvatarSizeRatio" value="0.053" min="0.03" max="0.1" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">配图大小系数（单张图片宽度比例）</label>
+                    <input type="number" id="contentImageSizeRatio" value="0.296" min="0.2" max="0.4" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">左边距系数</label>
+                    <input type="number" id="leftMarginRatio" value="0.04" min="0.02" max="0.1" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">右边距系数</label>
+                    <input type="number" id="rightMarginRatio" value="0.04" min="0.02" max="0.1" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">头像与文字间距系数</label>
+                    <input type="number" id="avatarTextSpacingRatio" value="0.027" min="0.01" max="0.05" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">内容行间距系数</label>
+                    <input type="number" id="contentLineSpacingRatio" value="0.053" min="0.03" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">图片间距系数</label>
+                    <input type="number" id="imageSpacingRatio" value="0.013" min="0.005" max="0.03" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">点赞者头像间距系数</label>
+                    <input type="number" id="likerSpacingRatio" value="0.013" min="0.005" max="0.03" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评论行间距系数</label>
+                    <input type="number" id="commentLineSpacingRatio" value="0.048" min="0.03" max="0.08" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评论间距系数</label>
+                    <input type="number" id="commentSpacingRatio" value="0.021" min="0.01" max="0.05" step="0.001" class="neumorphic-input w-full px-4 py-2 rounded-xl">
                 </div>
             </div>
         </div>
@@ -306,16 +435,18 @@
                         <li>• 第一行为标题行，必须包含：index, type, content</li>
                         <li>• 第2-8行为配置行，用于设置朋友圈参数</li>
                         <li>• 第9行开始为朋友圈记录</li>
-                        <li>• 配置项包括：publisher_name, publish_time, avatar_file, content, content_image, like_count, likers, comments</li>
+                        <li>• 配置项包括：publisher_name, publish_time, avatar_file, content, content_images, top_image_file, time_font_size, time_left_ratio, time_right_ratio, like_count, likers, comments, 以及各种缩放系数</li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold text-gray-800 mb-3">功能说明：</h4>
                     <ul class="text-sm text-gray-600 space-y-2">
                         <li>• <strong>头像</strong>：优先使用上传的图片，否则从res/pyq文件夹随机选择</li>
-                        <li>• <strong>配图</strong>：支持单张图片，优先使用上传的图片</li>
-                        <li>• <strong>点赞</strong>：显示点赞者头像，每行最多8个</li>
-                        <li>• <strong>评论</strong>：支持多条评论，包含评论者姓名和内容</li>
+                        <li>• <strong>多图配图</strong>：支持最多9张图片，每张显示为正方形（裁剪显示），宽度为可显示区域的1/3</li>
+                        <li>• <strong>顶部图片</strong>：支持自定义顶部图片，可设置时间显示位置和大小</li>
+                        <li>• <strong>点赞</strong>：使用本地点赞图标，显示点赞者头像，每行最多8个</li>
+                        <li>• <strong>评论</strong>：支持多条评论，评论者名字后自动添加冒号，评论区有灰色背景</li>
+                        <li>• <strong>缩放系数</strong>：所有尺寸都基于图片宽度比例设置，支持自定义头像大小、字体大小、间距等</li>
                         <li>• <strong>样式</strong>：完全还原微信朋友圈的真实样式</li>
                     </ul>
                 </div>
@@ -489,6 +620,10 @@
         async function generateImages() {
             hideError();
             
+            console.log('开始生成图片...');
+            console.log('上传的文件数量:', uploadedFiles.length);
+            console.log('上传的图片数量:', uploadedImages.length);
+            
             const generateBtn = document.getElementById('generateBtn');
             const generateText = document.getElementById('generateText');
             const generateLoading = document.getElementById('generateLoading');
@@ -502,11 +637,14 @@
                 
                 if (uploadedFiles.length > 0) {
                     // 批量生成
+                    console.log('开始批量生成，文件列表:', uploadedFiles.map(f => f.name));
                     for (let i = 0; i < uploadedFiles.length; i++) {
                         const file = uploadedFiles[i];
+                        console.log(`处理第${i+1}个文件:`, file.name);
                         generateText.textContent = `处理文件 ${i + 1}/${uploadedFiles.length}...`;
                         
                         const images = await processExcelFile(file);
+                        console.log(`文件 ${file.name} 生成完成，图片数量:`, images.length);
                         generatedImages.push({
                             fileName: file.name.replace(/\.(xlsx|xls)$/i, ''),
                             images: images
@@ -514,7 +652,9 @@
                     }
                 } else {
                     // 单次生成
+                    console.log('开始单次生成');
                     const config = getConfigFromForm();
+                    console.log('表单配置:', config);
                     const image = await generatePyqImage(config);
                     generatedImages.push({
                         fileName: '朋友圈',
@@ -522,6 +662,7 @@
                     });
                 }
 
+                console.log('所有图片生成完成，总数:', generatedImages.length);
                 generateText.textContent = '生成完成！';
                 setTimeout(() => {
                     generateText.textContent = '生成朋友圈图片';
@@ -540,16 +681,38 @@
         // 从表单获取配置
         function getConfigFromForm() {
             return {
-                publisherName: document.getElementById('publisherName').value || '飞书-Ben',
-                publishTime: document.getElementById('publishTime').value || '昨天',
-                avatarFile: document.getElementById('avatarFile').value || '1.jpg',
+                publisher_name: document.getElementById('publisherName').value || '飞书-Ben',
+                publish_time: document.getElementById('publishTime').value || '昨天',
+                avatar_file: document.getElementById('avatarFile').value || '1.jpg',
                 content: document.getElementById('content').value || '',
-                contentImage: document.getElementById('contentImage').value || '',
-                likeCount: parseInt(document.getElementById('likeCount').value) || 0,
+                content_images: document.getElementById('contentImages').value.split(',').filter(name => name.trim()),
+                top_image_file: document.getElementById('topImageFile').value || '',
+                time_font_size: parseInt(document.getElementById('timeFontSize').value) || 16,
+                time_left_ratio: parseFloat(document.getElementById('timeLeftRatio').value) || 0.1,
+                time_right_ratio: parseFloat(document.getElementById('timeRightRatio').value) || 0.1,
+                like_count: parseInt(document.getElementById('likeCount').value) || 0,
                 likers: document.getElementById('likers').value.split(',').filter(name => name.trim()),
                 comments: JSON.parse(document.getElementById('comments').value || '[]'),
                 imageWidth: parseInt(document.getElementById('imageWidth').value) || 375,
-                imageHeight: parseInt(document.getElementById('imageHeight').value) || 812
+                imageHeight: parseInt(document.getElementById('imageHeight').value) || 812,
+                // 新增的缩放系数
+                avatarSizeRatio: parseFloat(document.getElementById('avatarSizeRatio').value) || 0.107,
+                publisherNameFontRatio: parseFloat(document.getElementById('publisherNameFontRatio').value) || 0.043,
+                contentFontRatio: parseFloat(document.getElementById('contentFontRatio').value) || 0.043,
+                timeFontRatio: parseFloat(document.getElementById('timeFontRatio').value) || 0.037,
+                commentNameFontRatio: parseFloat(document.getElementById('commentNameFontRatio').value) || 0.037,
+                commentContentFontRatio: parseFloat(document.getElementById('commentContentFontRatio').value) || 0.037,
+                likeIconSizeRatio: parseFloat(document.getElementById('likeIconSizeRatio').value) || 0.043,
+                likerAvatarSizeRatio: parseFloat(document.getElementById('likerAvatarSizeRatio').value) || 0.053,
+                contentImageSizeRatio: parseFloat(document.getElementById('contentImageSizeRatio').value) || 0.296,
+                leftMarginRatio: parseFloat(document.getElementById('leftMarginRatio').value) || 0.04,
+                rightMarginRatio: parseFloat(document.getElementById('rightMarginRatio').value) || 0.04,
+                avatarTextSpacingRatio: parseFloat(document.getElementById('avatarTextSpacingRatio').value) || 0.027,
+                contentLineSpacingRatio: parseFloat(document.getElementById('contentLineSpacingRatio').value) || 0.053,
+                imageSpacingRatio: parseFloat(document.getElementById('imageSpacingRatio').value) || 0.013,
+                likerSpacingRatio: parseFloat(document.getElementById('likerSpacingRatio').value) || 0.013,
+                commentLineSpacingRatio: parseFloat(document.getElementById('commentLineSpacingRatio').value) || 0.048,
+                commentSpacingRatio: parseFloat(document.getElementById('commentSpacingRatio').value) || 0.021
             };
         }
 
@@ -558,25 +721,43 @@
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 
-                reader.onload = function(e) {
+                reader.onload = async function(e) {
                     try {
+                        console.log('开始处理Excel文件:', file.name);
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: 'array' });
+                        
+                        console.log('Excel工作簿信息:', {
+                            SheetNames: workbook.SheetNames,
+                            Sheets: Object.keys(workbook.Sheets)
+                        });
+                        
                         const sheetName = workbook.SheetNames[0];
                         const worksheet = workbook.Sheets[sheetName];
+                        
+                        console.log('使用工作表:', sheetName);
+                        console.log('工作表范围:', worksheet['!ref']);
+                        
                         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                        console.log('转换后的JSON数据:', jsonData);
 
                         // 解析Excel数据
                         const configs = parseExcelData(jsonData);
                         const images = [];
                         
-                        for (let config of configs) {
-                            const image = generatePyqImage(config);
+                        console.log('解析完成，开始生成图片，配置数量:', configs.length);
+                        
+                        for (let i = 0; i < configs.length; i++) {
+                            console.log(`生成第${i+1}张图片，配置:`, configs[i]);
+                            const image = await generatePyqImage(configs[i]);
                             images.push(image);
                         }
                         
+                        console.log('所有图片生成完成');
                         resolve(images);
                     } catch (error) {
+                        console.error('处理Excel文件时出错:', error);
                         reject(error);
                     }
                 };
@@ -591,6 +772,8 @@
 
         // 解析Excel数据
         function parseExcelData(jsonData) {
+            console.log('开始解析Excel数据:', jsonData);
+            
             if (jsonData.length < 2) {
                 throw new Error('Excel文件格式不正确');
             }
@@ -598,41 +781,113 @@
             const headers = jsonData[0];
             const data = jsonData.slice(1);
             
+            console.log('Excel表头:', headers);
+            console.log('Excel数据行数:', data.length);
+            
             // 查找必要的列
             const indexCol = headers.findIndex(h => h === 'index');
-            const typeCol = headers.findIndex(h => h === 'type');
             const contentCol = headers.findIndex(h => h === 'content');
 
-            if (indexCol === -1 || typeCol === -1 || contentCol === -1) {
-                throw new Error('Excel文件缺少必要的列：index, type, content');
+            console.log('index列位置:', indexCol);
+            console.log('content列位置:', contentCol);
+
+            if (indexCol === -1 || contentCol === -1) {
+                throw new Error('Excel文件缺少必要的列：index, content');
             }
 
             // 提取配置
             const configs = [];
             let currentConfig = {};
 
-            for (let row of data) {
+            console.log('开始遍历数据行...');
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
                 const index = row[indexCol];
-                const type = row[typeCol];
                 const content = row[contentCol];
 
-                if (index && content !== undefined) {
-                    if (['publisher_name', 'publish_time', 'avatar_file', 'content', 'content_image', 'like_count', 'likers', 'comments'].includes(index)) {
-                        currentConfig[index] = content;
+                console.log(`第${i+1}行 - index: "${index}", content: "${content}"`);
+
+                // 改进条件检查，允许空内容但必须有index
+                if (index !== undefined && index !== null && index !== '') {
+                    if (['publisher_name', 'publish_time', 'avatar_file', 'content', 'content_images', 'top_image_file', 'time_font_size', 'time_left_ratio', 'time_right_ratio', 'like_count', 'likers', 'comments', 'imageWidth', 'imageHeight'].includes(index)) {
+                        // 特殊处理comments字段，将其解析为JSON数组
+                        if (index === 'comments') {
+                            try {
+                                currentConfig[index] = content ? JSON.parse(content) : [];
+                            } catch (error) {
+                                console.warn('解析comments JSON失败，使用空数组:', error);
+                                currentConfig[index] = [];
+                            }
+                        } else if (index === 'likers' || index === 'content_images') {
+                            // 特殊处理likers和content_images字段，将其解析为数组
+                            try {
+                                currentConfig[index] = content ? JSON.parse(content) : [];
+                            } catch (error) {
+                                console.warn(`解析${index} JSON失败，使用逗号分隔解析:`, error);
+                                currentConfig[index] = content ? content.split(',').filter(name => name.trim()) : [];
+                            }
+                        } else if (index === 'like_count') {
+                            // 特殊处理like_count字段，将其转换为数字
+                            currentConfig[index] = content ? (parseInt(content) || 0) : 0;
+                        } else if (index === 'imageWidth' || index === 'imageHeight') {
+                            // 特殊处理图片尺寸字段，将其转换为数字
+                            currentConfig[index] = content ? (parseInt(content) || 375) : (index === 'imageWidth' ? 375 : 812);
+                        } else if (index === 'time_font_size') {
+                            // 特殊处理时间字体大小字段，将其转换为数字
+                            currentConfig[index] = content ? (parseInt(content) || 16) : 16;
+                        } else if (index === 'time_left_ratio' || index === 'time_right_ratio') {
+                            // 特殊处理时间边距比例字段，将其转换为浮点数
+                            currentConfig[index] = content ? (parseFloat(content) || 0.1) : 0.1;
+                        } else if (index === 'avatarSizeRatio' || index === 'publisherNameFontRatio' || index === 'contentFontRatio' || 
+                                   index === 'timeFontRatio' || index === 'commentNameFontRatio' || index === 'commentContentFontRatio' ||
+                                   index === 'likeIconSizeRatio' || index === 'likerAvatarSizeRatio' || index === 'contentImageSizeRatio' ||
+                                   index === 'leftMarginRatio' || index === 'rightMarginRatio' || index === 'avatarTextSpacingRatio' ||
+                                   index === 'contentLineSpacingRatio' || index === 'imageSpacingRatio' || index === 'likerSpacingRatio' ||
+                                   index === 'commentLineSpacingRatio' || index === 'commentSpacingRatio') {
+                            // 特殊处理缩放系数字段，将其转换为浮点数
+                            const defaultValue = {
+                                avatarSizeRatio: 0.107,
+                                publisherNameFontRatio: 0.043,
+                                contentFontRatio: 0.043,
+                                timeFontRatio: 0.037,
+                                commentNameFontRatio: 0.037,
+                                commentContentFontRatio: 0.037,
+                                likeIconSizeRatio: 0.043,
+                                likerAvatarSizeRatio: 0.053,
+                                contentImageSizeRatio: 0.296,
+                                leftMarginRatio: 0.04,
+                                rightMarginRatio: 0.04,
+                                avatarTextSpacingRatio: 0.027,
+                                contentLineSpacingRatio: 0.053,
+                                imageSpacingRatio: 0.013,
+                                likerSpacingRatio: 0.013,
+                                commentLineSpacingRatio: 0.048,
+                                commentSpacingRatio: 0.021
+                            };
+                            currentConfig[index] = content ? (parseFloat(content) || defaultValue[index]) : defaultValue[index];
+                        } else {
+                            currentConfig[index] = content || '';
+                        }
+                        console.log(`添加配置项: ${index} = ${content}`);
                     } else if (index === 'end') {
                         // 结束标记，保存当前配置
-                        if (Object.keys(currentConfig).length > 0) {
-                            configs.push({...currentConfig});
-                            currentConfig = {};
-                        }
+                        console.log('遇到结束标记，当前配置:', currentConfig);
+                        // 移除空配置检查，只要有end标记就保存配置
+                        configs.push({...currentConfig});
+                        console.log(`保存配置 ${configs.length}:`, currentConfig);
+                        currentConfig = {};
                     }
                 }
             }
 
-            // 添加最后一个配置
+            // 添加最后一个配置（如果没有end标记）
             if (Object.keys(currentConfig).length > 0) {
                 configs.push(currentConfig);
+                console.log(`保存最后一个配置:`, currentConfig);
             }
+
+            console.log('最终解析结果 - 配置数量:', configs.length);
+            console.log('所有配置:', configs);
 
             if (configs.length === 0) {
                 throw new Error('Excel文件中没有找到有效的配置');
@@ -652,17 +907,48 @@
             canvas.height = config.imageHeight || 812;
 
             // 绘制背景
-            ctx.fillStyle = '#f0f0f0';
+            ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 绘制状态栏
-            drawStatusBar(ctx, canvas.width);
+            let currentY = 0;
 
-            // 绘制头部
-            drawHeader(ctx, canvas.width);
+            // 绘制顶部图片（如果有）
+            if (config.top_image_file) {
+                console.log('开始加载顶部图片:', config.top_image_file);
+                try {
+                    const topImage = await loadImageFromServer(config.top_image_file, 'pyq');
+                    console.log('顶部图片加载成功，尺寸:', topImage.width, 'x', topImage.height);
+                    const topImageWidth = canvas.width;
+                    const topImageHeight = (topImage.height / topImage.width) * topImageWidth;
+                    
+                    ctx.drawImage(topImage, 0, 0, topImageWidth, topImageHeight);
+                    
+                    // 在顶部图片上绘制时间
+                    const timeText = new Date().toLocaleTimeString('zh-CN', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = `bold ${config.time_font_size || 16}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                    ctx.shadowBlur = 2;
+                    
+                    const timeX = canvas.width * (config.time_left_ratio || 0.1) + (canvas.width * (1 - config.time_left_ratio - config.time_right_ratio)) / 2;
+                    const timeY = topImageHeight * 0.15;
+                    
+                    ctx.fillText(timeText, timeX, timeY);
+                    ctx.shadowBlur = 0;
+                    
+                    currentY = topImageHeight;
+                } catch (error) {
+                    console.error('顶部图片加载失败，跳过:', error.message);
+                }
+            }
 
             // 绘制朋友圈内容
-            await drawPyqContent(ctx, config, canvas.width, canvas.height);
+            await drawPyqContent(ctx, config, canvas.width, canvas.height, currentY);
 
             // 转换为图片
             const imageData = canvas.toDataURL('image/png');
@@ -673,65 +959,30 @@
             };
         }
 
-        // 绘制状态栏
-        function drawStatusBar(ctx, width) {
-            const statusBarHeight = 44;
-            
-            // 绘制时间
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 16px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('7:01', width / 2, 28);
-            
-            // 绘制右侧状态图标
-            const rightX = width - 20;
-            ctx.fillStyle = '#000000';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'right';
-            ctx.fillText('100', rightX, 28);
-        }
 
-        // 绘制头部
-        function drawHeader(ctx, width) {
-            const headerHeight = 44;
-            const startY = 44;
-            
-            // 绘制背景
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, startY, width, headerHeight);
-            
-            // 绘制返回箭头
-            ctx.fillStyle = '#007AFF';
-            ctx.font = '20px Arial';
-            ctx.textAlign = 'left';
-            ctx.fillText('‹', 15, startY + 28);
-            
-            // 绘制标题
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 17px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('朋友圈', width / 2, startY + 28);
-            
-            // 绘制相机图标
-            ctx.fillStyle = '#007AFF';
-            ctx.font = '20px Arial';
-            ctx.textAlign = 'right';
-            ctx.fillText('📷', width - 15, startY + 28);
-        }
 
         // 绘制朋友圈内容
-        async function drawPyqContent(ctx, config, width, height) {
-            let currentY = 88; // 状态栏 + 头部高度
+        async function drawPyqContent(ctx, config, width, height, startY) {
+            // 计算基于图片宽度的各种尺寸
+            const avatarSize = Math.round(width * (config.avatarSizeRatio || 0.107));
+            const leftMargin = Math.round(width * (config.leftMarginRatio || 0.04));
+            const rightMargin = Math.round(width * (config.rightMarginRatio || 0.04));
+            const avatarTextSpacing = Math.round(width * (config.avatarTextSpacingRatio || 0.027));
+            const contentLineSpacing = Math.round(width * (config.contentLineSpacingRatio || 0.053));
+            const imageSpacing = Math.round(width * (config.imageSpacingRatio || 0.013));
+            
+            let currentY = startY + Math.round(width * 0.053); // 顶部间距，使用宽度比例
             
             // 绘制发布者头像
-            const avatarSize = 40;
-            const avatarX = 15;
+            const avatarX = leftMargin;
             const avatarY = currentY;
             
             // 加载头像
             let avatarImage = null;
             try {
-                avatarImage = await loadAvatarImage(config.avatarFile);
+                if (config.avatar_file) {
+                    avatarImage = await loadAvatarImage(config.avatar_file);
+                }
             } catch (error) {
                 console.log('头像加载失败，使用默认头像');
             }
@@ -745,26 +996,23 @@
             }
             
             // 绘制发布者姓名
+            const publisherNameFontSize = Math.round(width * (config.publisherNameFontRatio || 0.043));
             ctx.fillStyle = '#000000';
-            ctx.font = 'bold 16px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+            ctx.font = `bold ${publisherNameFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
             ctx.textAlign = 'left';
-            ctx.fillText(config.publisherName || '飞书-Ben', avatarX + avatarSize + 10, avatarY + 16);
+            ctx.fillText(config.publisher_name || '飞书-Ben', avatarX + avatarSize + avatarTextSpacing, avatarY + Math.round(publisherNameFontSize * 0.8));
             
-            // 绘制发布时间
-            ctx.fillStyle = '#8e8e93';
-            ctx.font = '14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
-            ctx.fillText(config.publishTime || '昨天', avatarX + avatarSize + 10, avatarY + 32);
+            currentY += avatarSize + Math.round(width * 0.027);
             
-            currentY += avatarSize + 10;
-            
-            // 绘制内容文本
+            // 绘制内容文本 - 与发布者名字左对齐
             if (config.content) {
-                const textX = 15;
-                const textWidth = width - 30;
-                const lineHeight = 20;
+                const textX = avatarX + avatarSize + avatarTextSpacing; // 与发布者名字左对齐
+                const textWidth = width - textX - rightMargin; // 减去右边距
+                const contentFontSize = Math.round(width * (config.contentFontRatio || 0.043));
+                const lineHeight = Math.round(contentFontSize * 1.25);
                 
                 ctx.fillStyle = '#000000';
-                ctx.font = '16px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                ctx.font = `${contentFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
                 ctx.textAlign = 'left';
                 
                 // 改进的文本换行算法
@@ -800,38 +1048,60 @@
                     currentY += lineHeight;
                 }
                 
-                currentY += 10;
+                currentY += Math.round(width * 0.027);
             }
             
-            // 绘制配图
-            if (config.contentImage) {
-                const imageX = 15;
-                const imageY = currentY;
-                const imageWidth = 200;
-                const imageHeight = 150;
+            // 绘制多张配图
+            if (config.content_images && config.content_images.length > 0) {
+                const maxImages = Math.min(config.content_images.length, 9);
+                const contentImageSize = Math.round(width * (config.contentImageSizeRatio || 0.296));
+                const imagesPerRow = 3;
                 
-                // 加载配图
-                let contentImage = null;
-                try {
-                    contentImage = await loadContentImage(config.contentImage);
-                } catch (error) {
-                    console.log('配图加载失败');
+                for (let i = 0; i < maxImages; i++) {
+                    const row = Math.floor(i / imagesPerRow);
+                    const col = i % imagesPerRow;
+                    const imageX = leftMargin + col * (contentImageSize + imageSpacing);
+                    const imageY = currentY + row * (contentImageSize + imageSpacing);
+                    
+                    try {
+                        const contentImage = await loadContentImage(config.content_images[i]);
+                        
+                        // 计算裁剪区域，保持正方形
+                        const minDimension = Math.min(contentImage.width, contentImage.height);
+                        const sourceX = (contentImage.width - minDimension) / 2;
+                        const sourceY = (contentImage.height - minDimension) / 2;
+                        
+                        ctx.drawImage(
+                            contentImage,
+                            sourceX, sourceY, minDimension, minDimension,
+                            imageX, imageY, contentImageSize, contentImageSize
+                        );
+                    } catch (error) {
+                        // 绘制图片占位符
+                        ctx.fillStyle = '#e0e0e0';
+                        ctx.fillRect(imageX, imageY, contentImageSize, contentImageSize);
+                    }
                 }
                 
-                if (contentImage) {
-                    ctx.drawImage(contentImage, imageX, imageY, imageWidth, imageHeight);
-                } else {
-                    // 绘制图片占位符
-                    ctx.fillStyle = '#e0e0e0';
-                    ctx.fillRect(imageX, imageY, imageWidth, imageHeight);
-                }
-                
-                currentY += imageHeight + 10;
+                const rows = Math.ceil(maxImages / imagesPerRow);
+                currentY += rows * (contentImageSize + imageSpacing) + Math.round(width * 0.027);
+            }
+            
+            // 绘制时间 - 与发布者名字左对齐
+            if (config.publish_time) {
+                const timeFontSize = Math.round(width * (config.timeFontRatio || 0.037));
+                ctx.fillStyle = '#8e8e93';
+                ctx.font = `${timeFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
+                ctx.textAlign = 'left';
+                // 与发布者名字左对齐（头像位置 + 头像大小 + 间距）
+                const timeX = avatarX + avatarSize + avatarTextSpacing;
+                ctx.fillText(config.publish_time, timeX, currentY + Math.round(timeFontSize * 0.8));
+                currentY += Math.round(timeFontSize * 1.8);
             }
             
             // 绘制点赞区域
-            if (config.likeCount > 0) {
-                currentY = drawLikes(ctx, config, width, currentY);
+            if (config.like_count && config.like_count > 0) {
+                currentY = await drawLikes(ctx, config, width, currentY);
             }
             
             // 绘制评论区域
@@ -841,67 +1111,180 @@
         }
 
         // 绘制点赞区域
-        function drawLikes(ctx, config, width, startY) {
-            const likeIconSize = 16;
-            const likeIconX = 15;
-            const likeIconY = startY + 12; // 调整心形图标垂直位置
+        async function drawLikes(ctx, config, width, startY) {
+            const leftMargin = Math.round(width * (config.leftMarginRatio || 0.04));
+            const avatarSize = Math.round(width * (config.avatarSizeRatio || 0.107));
+            const avatarTextSpacing = Math.round(width * (config.avatarTextSpacingRatio || 0.027));
+            const likerAvatarSize = Math.round(width * (config.likerAvatarSizeRatio || 0.053));
+            const likeIconSize = likerAvatarSize; // 让likeIcon与头像高度相同
+            // 与发布者名字左对齐（头像位置 + 头像大小 + 间距）
+            const likeIconX = leftMargin + avatarSize + avatarTextSpacing;
+            const likeIconY = startY + likerAvatarSize/2; // 与第一行头像垂直居中对齐
             
-            // 绘制心形图标
-            ctx.fillStyle = '#ff3b30';
-            ctx.font = `${likeIconSize}px Arial`;
-            ctx.textAlign = 'left';
-            ctx.fillText('❤️', likeIconX, likeIconY);
+            // 计算点赞区域高度
+            const maxAvatarsPerRow = 8;
+            const likerSpacing = Math.round(width * (config.likerSpacingRatio || 0.013));
+            const totalLikers = Math.min(config.like_count, config.likers ? config.likers.length : 0);
+            const rows = Math.ceil(totalLikers / maxAvatarsPerRow);
+            const likeBackgroundHeight = rows * (likerAvatarSize + likerSpacing) + Math.round(width * 0.04);
+            
+            // 绘制点赞区域灰色背景
+            ctx.fillStyle = '#f8f8f8';
+            const likeBackgroundX = leftMargin + avatarSize + avatarTextSpacing;
+            const likeBackgroundWidth = width - likeBackgroundX - Math.round(width * (config.rightMarginRatio || 0.04));
+            ctx.fillRect(likeBackgroundX, startY, likeBackgroundWidth, likeBackgroundHeight);
+            
+            // 绘制本地点赞图标
+            try {
+                const likeIcon = await loadImageFromServer('like_icon.png', 'pyq');
+                ctx.drawImage(likeIcon, likeIconX, likeIconY - likeIconSize/2, likeIconSize, likeIconSize);
+            } catch (error) {
+                // 如果本地图标加载失败，使用emoji作为备选
+                ctx.fillStyle = '#ff3b30';
+                ctx.font = `${likeIconSize}px Arial`;
+                ctx.textAlign = 'left';
+                ctx.fillText('❤️', likeIconX, likeIconY + likeIconSize/2);
+            }
             
             // 绘制点赞者头像
-            const avatarSize = 20;
-            const maxAvatarsPerRow = 8;
-            const avatarSpacing = 5;
-            let currentX = likeIconX + likeIconSize + 10;
+            // 点赞头像与点赞图标保持一定间距，但与发布者名字左对齐
+            let currentX = likeIconX + likeIconSize + Math.round(width * 0.027);
             let currentY = startY;
             let avatarCount = 0;
             
-            for (let i = 0; i < Math.min(config.likeCount, config.likers.length); i++) {
+            for (let i = 0; i < Math.min(config.like_count, config.likers ? config.likers.length : 0); i++) {
                 if (avatarCount >= maxAvatarsPerRow) {
-                    currentX = likeIconX + likeIconSize + 10;
-                    currentY += avatarSize + avatarSpacing;
+                    // 换行时，头像仍然与发布者名字左对齐
+                    currentX = likeIconX + likeIconSize + Math.round(width * 0.027);
+                    currentY += likerAvatarSize + likerSpacing;
                     avatarCount = 0;
                 }
                 
-                // 绘制点赞者头像（简化版）
-                ctx.fillStyle = '#e0e0e0';
-                ctx.fillRect(currentX, currentY, avatarSize, avatarSize);
+                // 尝试加载点赞者头像
+                let likerAvatar = null;
+                try {
+                    if (config.likers && config.likers[i]) {
+                        likerAvatar = await loadAvatarImage(config.likers[i]);
+                    }
+                } catch (error) {
+                    console.log('点赞者头像加载失败，使用默认头像');
+                }
                 
-                // 绘制点赞者姓名
-                ctx.fillStyle = '#007AFF';
-                ctx.font = '14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
-                ctx.textAlign = 'left';
-                ctx.fillText(config.likers[i] || `用户${i+1}`, currentX + avatarSize + 5, currentY + 14);
+                if (likerAvatar) {
+                    // 绘制圆形头像
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(currentX + likerAvatarSize/2, currentY + likerAvatarSize/2, likerAvatarSize/2, 0, 2 * Math.PI);
+                    ctx.clip();
+                    ctx.drawImage(likerAvatar, currentX, currentY, likerAvatarSize, likerAvatarSize);
+                    ctx.restore();
+                } else {
+                    // 绘制默认圆形头像
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(currentX + likerAvatarSize/2, currentY + likerAvatarSize/2, likerAvatarSize/2, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#e0e0e0';
+                    ctx.fill();
+                    ctx.restore();
+                }
                 
-                currentX += avatarSize + 50; // 为文字留出空间
+                currentX += likerAvatarSize + likerSpacing;
                 avatarCount++;
             }
             
-            return currentY + avatarSize + 15; // 增加底部间距，避免与评论重叠
+            return currentY + likerAvatarSize + Math.round(width * 0.04); // 增加底部间距，避免与评论重叠
         }
 
         // 绘制评论区域
         function drawComments(ctx, config, width, startY) {
-            let currentY = startY + 5; // 增加顶部间距，避免与点赞区域重叠
+            const leftMargin = Math.round(width * (config.leftMarginRatio || 0.04));
+            const avatarSize = Math.round(width * (config.avatarSizeRatio || 0.107));
+            const avatarTextSpacing = Math.round(width * (config.avatarTextSpacingRatio || 0.027));
+            const rightMargin = Math.round(width * (config.rightMarginRatio || 0.04));
+            const commentNameFontSize = Math.round(width * (config.commentNameFontRatio || 0.037));
+            const commentContentFontSize = Math.round(width * (config.commentContentFontRatio || 0.037));
+            const commentLineSpacing = Math.round(width * (config.commentLineSpacingRatio || 0.048));
+            const commentSpacing = Math.round(width * (config.commentSpacingRatio || 0.021));
+            
+            let currentY = startY + Math.round(width * 0.013); // 增加顶部间距，避免与点赞区域重叠
+            
+            // 确保comments是数组
+            if (!Array.isArray(config.comments)) {
+                console.warn('comments不是数组，跳过评论绘制');
+                return currentY;
+            }
+            
+            // 计算评论区域总高度
+            let totalCommentHeight = 0;
+            for (let comment of config.comments) {
+                if (!comment || typeof comment !== 'object' || !comment.content) {
+                    continue;
+                }
+                
+                // 计算评论内容行数
+                const nameWidth = ctx.measureText((comment.name || '用户') + '：').width;
+                const commentX = leftMargin + avatarSize + avatarTextSpacing + nameWidth + Math.round(width * 0.021);
+                const commentWidth = width - commentX - rightMargin;
+                
+                ctx.font = `${commentContentFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
+                const words = comment.content.split('');
+                const lines = [];
+                let currentLine = '';
+                
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i];
+                    const testLine = currentLine + word;
+                    const metrics = ctx.measureText(testLine);
+                    
+                    if (metrics.width > commentWidth) {
+                        if (currentLine === '') {
+                            lines.push(word);
+                        } else {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        }
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                
+                if (currentLine) {
+                    lines.push(currentLine);
+                }
+                
+                totalCommentHeight += Math.round(commentContentFontSize * 1.3) * lines.length + commentSpacing;
+            }
+            
+            // 绘制评论区灰色背景
+            ctx.fillStyle = '#f8f8f8';
+            // 背景与发布者名字左对齐
+            const commentBackgroundX = leftMargin + avatarSize + avatarTextSpacing;
+            const commentBackgroundHeight = totalCommentHeight + Math.round(width * 0.027);
+            ctx.fillRect(commentBackgroundX, currentY - Math.round(width * 0.013), width - commentBackgroundX - rightMargin, commentBackgroundHeight);
             
             for (let comment of config.comments) {
-                // 绘制评论者姓名
-                ctx.fillStyle = '#007AFF';
-                ctx.font = 'bold 14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
-                ctx.textAlign = 'left';
-                ctx.fillText(comment.name || '用户', 15, currentY + 14);
+                // 确保comment是对象且有content属性
+                if (!comment || typeof comment !== 'object' || !comment.content) {
+                    console.warn('评论格式不正确，跳过:', comment);
+                    continue;
+                }
                 
-                // 绘制评论内容
-                const commentX = 15;
-                const commentWidth = width - 30;
-                const lineHeight = 20; // 增加行间距，避免文字重叠
+                // 绘制评论者姓名（加上冒号）
+                ctx.fillStyle = '#007AFF';
+                ctx.font = `bold ${commentNameFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
+                ctx.textAlign = 'left';
+                // 评论者姓名与发布者名字左对齐
+                const commentNameX = leftMargin + avatarSize + avatarTextSpacing;
+                ctx.fillText((comment.name || '用户') + '：', commentNameX, currentY + Math.round(commentNameFontSize * 0.8));
+                
+                // 计算评论者姓名的宽度，为评论内容留出空间
+                const nameWidth = ctx.measureText((comment.name || '用户') + '：').width;
+                const commentX = commentNameX + nameWidth + Math.round(width * 0.021); // 姓名后留间距
+                const commentWidth = width - commentX - rightMargin; // 减去右边距
+                const lineHeight = Math.round(commentContentFontSize * 1.3); // 调整行间距
                 
                 ctx.fillStyle = '#000000';
-                ctx.font = '14px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                ctx.font = `${commentContentFontSize}px "SF Pro Display", "Helvetica Neue", Arial, sans-serif`;
                 
                 // 改进的文本换行算法
                 const words = comment.content.split('');
@@ -931,15 +1314,22 @@
                 }
                 
                 // 绘制每一行
-                for (let line of lines) {
-                    ctx.fillText(line, commentX, currentY + 14);
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (i === 0) {
+                        // 第一行与姓名同行
+                        ctx.fillText(line, commentX, currentY + Math.round(commentContentFontSize * 0.8));
+                    } else {
+                        // 后续行缩进到与发布者名字左对齐
+                        ctx.fillText(line, commentNameX, currentY + Math.round(commentContentFontSize * 0.8));
+                    }
                     currentY += lineHeight;
                 }
                 
-                currentY += 5;
+                currentY += commentSpacing; // 评论间距
             }
             
-            return currentY + 10;
+            return currentY + Math.round(width * 0.027);
         }
 
         // 显示预览
@@ -1029,9 +1419,17 @@
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
-                img.onload = () => resolve(img);
-                img.onerror = () => reject(new Error(`图片加载失败: ${imageName}`));
-                img.src = `../res/${type}/${imageName}`;
+                img.onload = () => {
+                    console.log(`图片加载成功: ${imageName}`);
+                    resolve(img);
+                };
+                img.onerror = () => {
+                    console.error(`图片加载失败: ${imageName}, 路径: ../res/${type}/${imageName}`);
+                    reject(new Error(`图片加载失败: ${imageName}`));
+                };
+                const imagePath = `../res/${type}/${imageName}`;
+                console.log(`尝试加载图片: ${imagePath}`);
+                img.src = imagePath;
             });
         }
 
@@ -1137,5 +1535,45 @@
             updateImageUploadStatus();
         }
     </script>
+<!-- COMMON_FOOTER -->
+<!-- 固定页脚 -->
+<footer class="neumorphic-footer mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <!-- 品牌信息 -->
+            <div class="lg:col-span-2">
+                <a href="../index.html" class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all mb-6 inline-block">
+                    君言工具站
+                </a>
+                <p class="text-gray-600 text-lg leading-relaxed max-w-md">
+                    提供高质量、免费的在线工具，帮助您提高工作效率，解决日常问题。
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部版权信息 -->
+    <div class="neumorphic-footer-bottom">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex justify-center">
+                <p class="text-gray-600 text-sm">© 2025 君言工具站 版权所有</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+/* 拟物风页脚 */
+.neumorphic-footer {
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.neumorphic-footer-bottom {
+    background: linear-gradient(145deg, #ffffff, #f0f0f3);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+</style>
+<!-- END_COMMON_FOOTER -->
 </body>
 </html>
