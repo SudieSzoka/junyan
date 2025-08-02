@@ -25,5 +25,14 @@
       "category": ["image", "mulit"],
       "icon": "weixin_pyq_imgCreat",
       "show": true
+    },
+    {
+      "id": 4,
+      "name": "图片尺寸/比例修改工具",
+      "description": "单图/批量修改图片尺寸和比例，支持多种预设尺寸和比例，提供拉伸、裁剪、背景填充等修改方式",
+      "path": "tools/image_resize_tool.html",
+      "category": ["image", "mulit"],
+      "icon": "image_resize_tool",
+      "show": true
     }
   ]

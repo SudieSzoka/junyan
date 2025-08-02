@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片尺寸/比例修改工具 - 君言工具站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .neumorphic-bg { background: linear-gradient(145deg, #e6e6e6, #ffffff); }
+        .neumorphic-card { background: linear-gradient(145deg, #ffffff, #e6e6e6); box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff; }
+        .neumorphic-btn { background: linear-gradient(145deg, #ffffff, #e6e6e6); box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff; }
+        .neumorphic-input { background: linear-gradient(145deg, #ffffff, #e6e6e6); box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff; border: none; }
+        .upload-area { border: 2px dashed #d1d9e6; transition: all 0.3s ease; }
+        .upload-area:hover { border-color: #7d93f3; background: rgba(125, 147, 243, 0.05); }
+        .tab-btn { background: linear-gradient(145deg, #f3f4f6, #e5e7eb); box-shadow: 6px 6px 12px #d1d5db, -6px -6px 12px #ffffff; }
+        .tab-btn.active { background: linear-gradient(145deg, #7d93f3, #6366f1); color: white; }
+        .preset-btn { background: linear-gradient(145deg, #ffffff, #e6e6e6); box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff; border: 2px solid transparent; }
+        .preset-btn.selected { border-color: #7d93f3; background: linear-gradient(145deg, #e6f3ff, #cce7ff); }
+    </style>
+</head>
+<body class="neumorphic-bg min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                图片尺寸/比例修改工具
+            </h1>
+            <p class="text-lg text-gray-600">支持单图/批量修改图片尺寸和比例，提供多种预设选项</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 左侧：图片上传和预览 -->
+            <div class="neumorphic-card rounded-3xl p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">图片上传</h2>
+                
+                <div id="uploadArea" class="upload-area rounded-2xl p-8 text-center mb-6 cursor-pointer">
+                    <div class="mb-4">
+                        <svg class="w-16 h-16 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <p class="text-lg text-gray-600 mb-2">拖拽图片到此处或点击上传</p>
+                    <p class="text-sm text-gray-500">支持 JPG、PNG、GIF 格式，可批量上传</p>
+                    <input type="file" id="fileInput" multiple accept="image/*" class="hidden">
+                </div>
+
+                <div id="imagePreview" class="hidden">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">图片预览</h3>
+                    <div id="previewContainer" class="space-y-4 max-h-96 overflow-y-auto">
+                        <!-- 预览图片将在这里显示 -->
+                    </div>
+                </div>
+
+                <div id="downloadSection" class="hidden mt-6">
+                    <button id="downloadAllBtn" class="neumorphic-btn w-full py-4 rounded-2xl bg-gradient-to-r from-green-600 to-blue-600 text-white font-medium">
+                        <span id="downloadText">下载所有修改后的图片</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 右侧：设置面板 -->
+            <div class="neumorphic-card rounded-3xl p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">修改设置</h2>
+
+                <!-- 标签页切换 -->
+                <div class="flex space-x-2 mb-6">
+                    <button id="sizeTab" class="tab-btn px-6 py-3 rounded-xl font-medium active">尺寸修改</button>
+                    <button id="ratioTab" class="tab-btn px-6 py-3 rounded-xl font-medium">比例修改</button>
+                </div>
+
+                <!-- 尺寸修改面板 -->
+                <div id="sizePanel">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">预设尺寸</h3>
+                        <div class="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto">
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="900" data-height="383">
+                                <div class="font-medium">公众号首图</div>
+                                <div class="text-xs text-gray-500">900×383px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="200" data-height="200">
+                                <div class="font-medium">公众号次图</div>
+                                <div class="text-xs text-gray-500">200×200px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="1080" data-height="1080">
+                                <div class="font-medium">朋友圈封面</div>
+                                <div class="text-xs text-gray-500">1080×1080px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="1920" data-height="1080">
+                                <div class="font-medium">电脑壁纸</div>
+                                <div class="text-xs text-gray-500">1920×1080px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="500" data-height="500">
+                                <div class="font-medium">Logo设计</div>
+                                <div class="text-xs text-gray-500">500×500px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="800" data-height="800">
+                                <div class="font-medium">方形主图</div>
+                                <div class="text-xs text-gray-500">800×800px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="800" data-height="1200">
+                                <div class="font-medium">竖版主图</div>
+                                <div class="text-xs text-gray-500">800×1200px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="750" data-height="1000">
+                                <div class="font-medium">拼多多店铺首页</div>
+                                <div class="text-xs text-gray-500">750×1000px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="295" data-height="413">
+                                <div class="font-medium">标准1寸/1R</div>
+                                <div class="text-xs text-gray-500">295×413px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="413" data-height="626">
+                                <div class="font-medium">标准2寸/2R</div>
+                                <div class="text-xs text-gray-500">413×626px</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-width="358" data-height="441">
+                                <div class="font-medium">二代身份证</div>
+                                <div class="text-xs text-gray-500">358×441px</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">手动输入尺寸</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">宽度 (px)</label>
+                                <input type="number" id="customWidth" class="neumorphic-input w-full px-4 py-3 rounded-xl" placeholder="宽度">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">高度 (px)</label>
+                                <input type="number" id="customHeight" class="neumorphic-input w-full px-4 py-3 rounded-xl" placeholder="高度">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 比例修改面板 -->
+                <div id="ratioPanel" class="hidden">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">预设比例</h3>
+                        <div class="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto">
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-ratio="1:1">
+                                <div class="font-medium">1:1 正方形</div>
+                                <div class="text-xs text-gray-500">正方形比例</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-ratio="4:3">
+                                <div class="font-medium">4:3 标准屏幕(横)</div>
+                                <div class="text-xs text-gray-500">传统屏幕比例</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-ratio="3:4">
+                                <div class="font-medium">3:4 标准屏幕(竖)</div>
+                                <div class="text-xs text-gray-500">竖屏标准比例</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-ratio="3:2">
+                                <div class="font-medium">3:2 单反相机(横)</div>
+                                <div class="text-xs text-gray-500">摄影标准比例</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-ratio="16:9">
+                                <div class="font-medium">16:9 视频横屏</div>
+                                <div class="text-xs text-gray-500">现代视频标准</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-ratio="9:16">
+                                <div class="font-medium">9:16 视频竖屏</div>
+                                <div class="text-xs text-gray-500">手机视频标准</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-ratio="5:3">
+                                <div class="font-medium">5:3 宽屏相册</div>
+                                <div class="text-xs text-gray-500">宽屏显示比例</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-ratio="18:9">
+                                <div class="font-medium">18:9 全面屏(横)</div>
+                                <div class="text-xs text-gray-500">超宽屏比例</div>
+                            </button>
+                            <button class="preset-btn p-3 rounded-xl text-sm" data-ratio="9:18">
+                                <div class="font-medium">9:18 全面屏(竖)</div>
+                                <div class="text-xs text-gray-500">超长屏比例</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">手动输入比例</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">宽度比例</label>
+                                <input type="number" id="customRatioWidth" class="neumorphic-input w-full px-4 py-3 rounded-xl" placeholder="宽度比例" min="1">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">高度比例</label>
+                                <input type="number" id="customRatioHeight" class="neumorphic-input w-full px-4 py-3 rounded-xl" placeholder="高度比例" min="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">目标尺寸</h3>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">宽度 (px)</label>
+                                <input type="number" id="ratioTargetWidth" class="neumorphic-input w-full px-4 py-3 rounded-xl" placeholder="目标宽度">
+                            </div>
+                            <div class="flex items-end">
+                                <button id="ratioLockBtn" class="neumorphic-btn p-3 rounded-xl text-blue-600 hover:text-blue-700 transition-colors" title="锁定比例">
+                                    <svg id="lockIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 17a2 2 0 100-4 2 2 0 000 4z"/>
+                                        <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">高度 (px)</label>
+                                <input type="number" id="ratioTargetHeight" class="neumorphic-input w-full px-4 py-3 rounded-xl" placeholder="目标高度">
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            <span id="currentRatio">当前比例: --</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 修改方式 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">修改方式</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="resizeMethod" value="stretch" class="text-blue-600" checked>
+                            <span class="text-gray-700">拉伸 - 直接拉伸到目标尺寸</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="resizeMethod" value="crop" class="text-blue-600">
+                            <span class="text-gray-700">裁剪 - 保持比例裁剪到目标尺寸</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="resizeMethod" value="background" class="text-blue-600">
+                            <span class="text-gray-700">背景填充 - 保持比例，用背景填充空白</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 背景设置 -->
+                <div id="backgroundSettings" class="mb-6 hidden">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">背景设置</h3>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">背景类型</label>
+                        <select id="backgroundType" class="neumorphic-input w-full px-4 py-3 rounded-xl">
+                            <option value="transparent">透明背景</option>
+                            <option value="solid">纯色背景</option>
+                            <option value="gradient">渐变背景</option>
+                        </select>
+                    </div>
+
+                    <div id="solidColorSettings" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">背景颜色</label>
+                        <input type="color" id="backgroundColor" class="neumorphic-input w-full h-12 rounded-xl" value="#ffffff">
+                    </div>
+
+                    <div id="gradientSettings" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">渐变类型</label>
+                        <select id="gradientType" class="neumorphic-input w-full px-4 py-3 rounded-xl mb-3">
+                            <option value="linear">线性渐变</option>
+                            <option value="radial">径向渐变</option>
+                        </select>
+                        
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">起始颜色</label>
+                                <input type="color" id="gradientStartColor" class="neumorphic-input w-full h-10 rounded-xl" value="#ffffff">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">结束颜色</label>
+                                <input type="color" id="gradientEndColor" class="neumorphic-input w-full h-10 rounded-xl" value="#000000">
+                            </div>
+                        </div>
+                        
+                        <div id="gradientPreview" class="w-full h-16 rounded-xl border-2 border-gray-200"></div>
+                    </div>
+                </div>
+
+                <!-- 应用按钮 -->
+                <button id="applyBtn" class="neumorphic-btn w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium">
+                    应用修改
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let uploadedImages = [];
+        let currentMode = 'size';
+        let selectedSize = null;
+        let selectedRatio = null;
+        let targetSize = { width: 0, height: 0 };
+        let isRatioLocked = true; // 默认锁定比例
+        let currentRatioValue = null; // 当前选择的比例值
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            updateGradientPreview();
+        });
+
+        // 初始化事件监听器
+        function initializeEventListeners() {
+            // 文件上传
+            document.getElementById('uploadArea').addEventListener('click', () => document.getElementById('fileInput').click());
+            document.getElementById('uploadArea').addEventListener('dragover', handleDragOver);
+            document.getElementById('uploadArea').addEventListener('drop', handleDrop);
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+            // 标签页切换
+            document.getElementById('sizeTab').addEventListener('click', () => switchTab('size'));
+            document.getElementById('ratioTab').addEventListener('click', () => switchTab('ratio'));
+
+            // 预设尺寸按钮
+            document.querySelectorAll('#sizePanel .preset-btn').forEach(btn => {
+                btn.addEventListener('click', () => selectPresetSize(btn));
+            });
+
+            // 预设比例按钮
+            document.querySelectorAll('#ratioPanel .preset-btn').forEach(btn => {
+                btn.addEventListener('click', () => selectPresetRatio(btn));
+            });
+
+            // 手动输入
+            document.getElementById('customWidth').addEventListener('input', updateCustomSize);
+            document.getElementById('customHeight').addEventListener('input', updateCustomSize);
+            document.getElementById('customRatioWidth').addEventListener('input', updateCustomRatio);
+            document.getElementById('customRatioHeight').addEventListener('input', updateCustomRatio);
+            document.getElementById('ratioTargetWidth').addEventListener('input', updateRatioTarget);
+            document.getElementById('ratioTargetHeight').addEventListener('input', updateRatioTarget);
+
+            // 比例锁定按钮
+            document.getElementById('ratioLockBtn').addEventListener('click', toggleRatioLock);
+
+            // 修改方式
+            document.querySelectorAll('input[name="resizeMethod"]').forEach(radio => {
+                radio.addEventListener('change', toggleBackgroundSettings);
+            });
+
+            // 背景设置
+            document.getElementById('backgroundType').addEventListener('change', toggleBackgroundTypeSettings);
+            document.getElementById('backgroundColor').addEventListener('input', updateGradientPreview);
+            document.getElementById('gradientType').addEventListener('change', updateGradientPreview);
+            document.getElementById('gradientStartColor').addEventListener('input', updateGradientPreview);
+            document.getElementById('gradientEndColor').addEventListener('input', updateGradientPreview);
+
+            // 应用和下载按钮
+            document.getElementById('applyBtn').addEventListener('click', applyResize);
+            document.getElementById('downloadAllBtn').addEventListener('click', downloadAllImages);
+        }
+
+        // 处理拖拽
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('uploadArea').classList.add('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('uploadArea').classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            processFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            processFiles(files);
+        }
+
+        // 处理文件
+        function processFiles(files) {
+            if (files.length === 0) return;
+
+            uploadedImages = [];
+            document.getElementById('previewContainer').innerHTML = '';
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        uploadedImages.push({
+                            file: file,
+                            originalWidth: img.width,
+                            originalHeight: img.height,
+                            dataUrl: e.target.result
+                        });
+                        
+                        displayImagePreview(img, file.name, index);
+                        
+                        if (uploadedImages.length === files.length) {
+                            document.getElementById('imagePreview').classList.remove('hidden');
+                            document.getElementById('downloadSection').classList.remove('hidden');
+                            
+                            // 如果当前是比例模式且有选择的比例，自动计算目标尺寸
+                            if (currentMode === 'ratio' && currentRatioValue) {
+                                calculateTargetSizeFromRatio();
+                            }
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 显示图片预览
+        function displayImagePreview(img, fileName, index) {
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'neumorphic-card p-4 rounded-2xl';
+            previewDiv.innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">${fileName}</span>
+                    <span class="text-xs text-gray-500">${img.width}×${img.height}px</span>
+                </div>
+                <img src="${img.src}" alt="${fileName}" class="max-w-full max-h-64 object-contain rounded-xl">
+            `;
+            document.getElementById('previewContainer').appendChild(previewDiv);
+        }
+
+        // 标签页切换
+        function switchTab(mode) {
+            currentMode = mode;
+            
+            if (mode === 'size') {
+                document.getElementById('sizeTab').classList.add('active');
+                document.getElementById('ratioTab').classList.remove('active');
+                document.getElementById('sizePanel').classList.remove('hidden');
+                document.getElementById('ratioPanel').classList.add('hidden');
+            } else {
+                document.getElementById('ratioTab').classList.add('active');
+                document.getElementById('sizeTab').classList.remove('active');
+                document.getElementById('ratioPanel').classList.remove('hidden');
+                document.getElementById('sizePanel').classList.add('hidden');
+                
+                // 切换到比例模式时，如果有上传的图片和选择的比例，自动计算目标尺寸
+                if (uploadedImages.length > 0 && currentRatioValue) {
+                    calculateTargetSizeFromRatio();
+                }
+            }
+        }
+
+        // 选择预设尺寸
+        function selectPresetSize(btn) {
+            document.querySelectorAll('#sizePanel .preset-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            
+            const width = parseInt(btn.dataset.width);
+            const height = parseInt(btn.dataset.height);
+            selectedSize = { width, height };
+            
+            document.getElementById('customWidth').value = width;
+            document.getElementById('customHeight').value = height;
+            
+            selectedRatio = null;
+            document.querySelectorAll('#ratioPanel .preset-btn').forEach(b => b.classList.remove('selected'));
+        }
+
+        // 选择预设比例
+        function selectPresetRatio(btn) {
+            document.querySelectorAll('#ratioPanel .preset-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            
+            const ratio = btn.dataset.ratio;
+            selectedRatio = ratio;
+            currentRatioValue = ratio;
+            
+            const [width, height] = ratio.split(':').map(Number);
+            document.getElementById('customRatioWidth').value = width;
+            document.getElementById('customRatioHeight').value = height;
+            
+            // 自动计算目标尺寸
+            calculateTargetSizeFromRatio();
+            
+            selectedSize = null;
+            document.querySelectorAll('#sizePanel .preset-btn').forEach(b => b.classList.remove('selected'));
+        }
+
+        // 更新自定义尺寸
+        function updateCustomSize() {
+            const width = parseInt(document.getElementById('customWidth').value) || 0;
+            const height = parseInt(document.getElementById('customHeight').value) || 0;
+            
+            if (width > 0 && height > 0) {
+                selectedSize = { width, height };
+                document.querySelectorAll('#sizePanel .preset-btn').forEach(b => b.classList.remove('selected'));
+            }
+        }
+
+        // 更新自定义比例
+        function updateCustomRatio() {
+            const width = parseInt(document.getElementById('customRatioWidth').value) || 0;
+            const height = parseInt(document.getElementById('customRatioHeight').value) || 0;
+            
+            if (width > 0 && height > 0) {
+                selectedRatio = `${width}:${height}`;
+                currentRatioValue = selectedRatio;
+                document.querySelectorAll('#ratioPanel .preset-btn').forEach(b => b.classList.remove('selected'));
+                
+                // 自动计算目标尺寸
+                calculateTargetSizeFromRatio();
+            }
+        }
+
+        // 更新比例目标尺寸
+        function updateRatioTarget() {
+            const width = parseInt(document.getElementById('ratioTargetWidth').value) || 0;
+            const height = parseInt(document.getElementById('ratioTargetHeight').value) || 0;
+            
+            if (width > 0 && height > 0) {
+                targetSize = { width, height };
+                
+                // 更新当前比例显示
+                updateCurrentRatioDisplay();
+                
+                // 如果锁定比例，自动调整另一个尺寸
+                if (isRatioLocked && currentRatioValue) {
+                    const [ratioWidth, ratioHeight] = currentRatioValue.split(':').map(Number);
+                    const ratio = ratioWidth / ratioHeight;
+                    
+                    // 判断是宽度还是高度发生了变化
+                    const widthInput = document.getElementById('ratioTargetWidth');
+                    const heightInput = document.getElementById('ratioTargetHeight');
+                    
+                    if (document.activeElement === widthInput) {
+                        // 宽度变化，调整高度
+                        const newHeight = Math.round(width / ratio);
+                        heightInput.value = newHeight;
+                        targetSize.height = newHeight;
+                    } else if (document.activeElement === heightInput) {
+                        // 高度变化，调整宽度
+                        const newWidth = Math.round(height * ratio);
+                        widthInput.value = newWidth;
+                        targetSize.width = newWidth;
+                    }
+                }
+            }
+        }
+
+        // 切换背景设置显示
+        function toggleBackgroundSettings() {
+            const method = document.querySelector('input[name="resizeMethod"]:checked').value;
+            if (method === 'background') {
+                document.getElementById('backgroundSettings').classList.remove('hidden');
+            } else {
+                document.getElementById('backgroundSettings').classList.add('hidden');
+            }
+        }
+
+        // 切换背景类型设置
+        function toggleBackgroundTypeSettings() {
+            const type = document.getElementById('backgroundType').value;
+            
+            document.getElementById('solidColorSettings').classList.add('hidden');
+            document.getElementById('gradientSettings').classList.add('hidden');
+            
+            if (type === 'solid') {
+                document.getElementById('solidColorSettings').classList.remove('hidden');
+            } else if (type === 'gradient') {
+                document.getElementById('gradientSettings').classList.remove('hidden');
+            }
+        }
+
+        // 更新渐变预览
+        function updateGradientPreview() {
+            const type = document.getElementById('gradientType').value;
+            const startColor = document.getElementById('gradientStartColor').value;
+            const endColor = document.getElementById('gradientEndColor').value;
+            
+            if (type === 'linear') {
+                document.getElementById('gradientPreview').style.background = `linear-gradient(to right, ${startColor}, ${endColor})`;
+            } else {
+                document.getElementById('gradientPreview').style.background = `radial-gradient(circle, ${startColor}, ${endColor})`;
+            }
+        }
+
+        // 切换比例锁定
+        function toggleRatioLock() {
+            isRatioLocked = !isRatioLocked;
+            const lockBtn = document.getElementById('ratioLockBtn');
+            const lockIcon = document.getElementById('lockIcon');
+            
+            if (isRatioLocked) {
+                lockBtn.classList.add('text-blue-600');
+                lockBtn.classList.remove('text-gray-400');
+                lockIcon.innerHTML = `
+                    <path d="M12 17a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                `;
+                lockBtn.title = '锁定比例';
+            } else {
+                lockBtn.classList.remove('text-blue-600');
+                lockBtn.classList.add('text-gray-400');
+                lockIcon.innerHTML = `
+                    <path d="M12 17a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z"/>
+                `;
+                lockBtn.title = '解锁比例';
+            }
+        }
+
+        // 根据比例计算目标尺寸
+        function calculateTargetSizeFromRatio() {
+            if (!currentRatioValue || uploadedImages.length === 0) return;
+            
+            const [ratioWidth, ratioHeight] = currentRatioValue.split(':').map(Number);
+            const ratio = ratioWidth / ratioHeight;
+            
+            // 使用第一张图片的尺寸作为基准
+            const firstImage = uploadedImages[0];
+            const originalWidth = firstImage.originalWidth;
+            const originalHeight = firstImage.originalHeight;
+            
+            // 计算目标尺寸，保持比例
+            let targetWidth, targetHeight;
+            
+            if (originalWidth / originalHeight > ratio) {
+                // 原图更宽，以高度为基准
+                targetHeight = originalHeight;
+                targetWidth = Math.round(originalHeight * ratio);
+            } else {
+                // 原图更高，以宽度为基准
+                targetWidth = originalWidth;
+                targetHeight = Math.round(originalWidth / ratio);
+            }
+            
+            // 更新输入框
+            document.getElementById('ratioTargetWidth').value = targetWidth;
+            document.getElementById('ratioTargetHeight').value = targetHeight;
+            
+            // 更新目标尺寸
+            targetSize = { width: targetWidth, height: targetHeight };
+            
+            // 更新比例显示
+            updateCurrentRatioDisplay();
+        }
+
+        // 更新当前比例显示
+        function updateCurrentRatioDisplay() {
+            const width = parseInt(document.getElementById('ratioTargetWidth').value) || 0;
+            const height = parseInt(document.getElementById('ratioTargetHeight').value) || 0;
+            
+            if (width > 0 && height > 0) {
+                const ratio = width / height;
+                const ratioText = ratio.toFixed(2);
+                document.getElementById('currentRatio').textContent = `当前比例: ${ratioText}:1`;
+            } else {
+                document.getElementById('currentRatio').textContent = '当前比例: --';
+            }
+        }
+
+        // 应用修改
+        function applyResize() {
+            if (uploadedImages.length === 0) {
+                alert('请先上传图片');
+                return;
+            }
+
+            let targetWidth, targetHeight;
+
+            if (currentMode === 'size') {
+                if (!selectedSize) {
+                    alert('请选择或输入目标尺寸');
+                    return;
+                }
+                targetWidth = selectedSize.width;
+                targetHeight = selectedSize.height;
+            } else {
+                if (!selectedRatio || !targetSize.width || !targetSize.height) {
+                    alert('请选择比例并输入目标尺寸');
+                    return;
+                }
+                targetWidth = targetSize.width;
+                targetHeight = targetSize.height;
+            }
+
+            const method = document.querySelector('input[name="resizeMethod"]:checked').value;
+            
+            uploadedImages.forEach((imageData, index) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+
+                const img = new Image();
+                img.onload = function() {
+                    if (method === 'stretch') {
+                        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+                    } else if (method === 'crop') {
+                        const scale = Math.max(targetWidth / img.width, targetHeight / img.height);
+                        const scaledWidth = img.width * scale;
+                        const scaledHeight = img.height * scale;
+                        const x = (targetWidth - scaledWidth) / 2;
+                        const y = (targetHeight - scaledHeight) / 2;
+                        ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+                    } else if (method === 'background') {
+                        const scale = Math.min(targetWidth / img.width, targetHeight / img.height);
+                        const scaledWidth = img.width * scale;
+                        const scaledHeight = img.height * scale;
+                        const x = (targetWidth - scaledWidth) / 2;
+                        const y = (targetHeight - scaledHeight) / 2;
+
+                        const bgType = document.getElementById('backgroundType').value;
+                        if (bgType === 'solid') {
+                            ctx.fillStyle = document.getElementById('backgroundColor').value;
+                            ctx.fillRect(0, 0, targetWidth, targetHeight);
+                        } else if (bgType === 'gradient') {
+                            const gradientType = document.getElementById('gradientType').value;
+                            const startColor = document.getElementById('gradientStartColor').value;
+                            const endColor = document.getElementById('gradientEndColor').value;
+                            
+                            let gradient;
+                            if (gradientType === 'linear') {
+                                gradient = ctx.createLinearGradient(0, 0, targetWidth, targetHeight);
+                            } else {
+                                gradient = ctx.createRadialGradient(targetWidth/2, targetHeight/2, 0, targetWidth/2, targetHeight/2, Math.max(targetWidth, targetHeight)/2);
+                            }
+                            gradient.addColorStop(0, startColor);
+                            gradient.addColorStop(1, endColor);
+                            ctx.fillStyle = gradient;
+                            ctx.fillRect(0, 0, targetWidth, targetHeight);
+                        }
+
+                        ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+                    }
+
+                    imageData.modifiedDataUrl = canvas.toDataURL('image/png');
+                    updateImagePreview(index, canvas.toDataURL('image/png'));
+                };
+                img.src = imageData.dataUrl;
+            });
+        }
+
+        // 更新图片预览
+        function updateImagePreview(index, dataUrl) {
+            const previewDivs = document.getElementById('previewContainer').children;
+            if (previewDivs[index]) {
+                const img = previewDivs[index].querySelector('img');
+                if (img) {
+                    img.src = dataUrl;
+                }
+            }
+        }
+
+        // 下载所有图片
+        function downloadAllImages() {
+            if (uploadedImages.length === 0) {
+                alert('没有可下载的图片');
+                return;
+            }
+
+            document.getElementById('downloadText').textContent = '正在准备下载...';
+
+            uploadedImages.forEach((imageData, index) => {
+                if (imageData.modifiedDataUrl) {
+                    const link = document.createElement('a');
+                    link.download = `resized_${imageData.file.name}`;
+                    link.href = imageData.modifiedDataUrl;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            });
+
+            setTimeout(() => {
+                document.getElementById('downloadText').textContent = '下载所有修改后的图片';
+            }, 1000);
+        }
+    </script>
+</body>
+</html> 
